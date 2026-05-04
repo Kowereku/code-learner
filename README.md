@@ -57,3 +57,26 @@ uv run alembic downgrade -1
 If `--autogenerate` creates an empty migration, it usually means no model metadata was imported before Alembic loaded `target_metadata`.
 
 The shared SQLAlchemy base lives in `src/model/db.py` and Alembic reads `Base.metadata` from there.
+
+## Commit Hooks
+
+This repository includes a commit-msg hook that enforces conventional commit messages and requires a JIRA ticket key in the scope.
+
+Install it once after cloning:
+
+```bash
+make hooks
+```
+
+The expected format is:
+
+```text
+type(ABC-123): short summary
+```
+
+Examples:
+
+```text
+feat(ABC-123): add course lookup
+fix(PLAT-42): reject expired tokens
+```

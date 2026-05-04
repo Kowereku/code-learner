@@ -1,0 +1,38 @@
+#!/usr/bin/env python3
+
+from __future__ import annotations
+
+import re
+import sys
+from pathlib import Path
+
+
+CONVENTIONAL_COMMIT_RE = re.compile(
+    r"^(build|ci|docs|feat|fix|perf|refactor|revert|style|test|chore)"
+    r"(\([A-Z][A-Z0-9]+-\d+\))?(!)?: .+$"
+)
+
+
+def main() -> int:
+    if len(sys.argv) != 2:
+        print("commit-msg hook expected the path to the commit message file.", file=sys.stderr)
+        return 1
+
+    message_path = Path(sys.argv[1])
+    subject = message_path.read_text(encoding="utf-8", errors="replace").splitlines()[0].strip()
+
+    if subject.startswith("Merge "):
+        return 0
+
+    if CONVENTIONAL_COMMIT_RE.match(subject):
+        return 0
+
+    print("Invalid commit message. Use conventional commits with the JIRA key in the scope.", file=sys.stderr)
+    print("Expected: type(ABC-123): short summary", file=sys.stderr)
+    print("Examples: feat(ABC-123): add course lookup", file=sys.stderr)
+    print("          fix(PLAT-42): reject expired tokens", file=sys.stderr)
+    return 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

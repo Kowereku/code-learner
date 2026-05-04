@@ -1,4 +1,4 @@
-.PHONY: install req run-dev run db-up db-down
+.PHONY: install req run-dev run db-up db-down hooks
 
 install:
 	uv sync
@@ -17,3 +17,6 @@ db-up:
 
 db-down:
 	docker compose down
+
+hooks:
+	git config core.hooksPath .githooks
