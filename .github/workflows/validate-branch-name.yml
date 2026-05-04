@@ -1,0 +1,25 @@
+name: Validate Branch Names
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  check-branch-name:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate branch name format
+        run: |
+          BRANCH_NAME="${{ github.head_ref }}"
+          PATTERN='^(feat|fix|chore|docs|style|refactor|perf|test|build|ci)/[A-Z][A-Z0-9]+-\d+-[a-z0-9]+([-]?[a-z0-9]+)*$'
+
+          if [[ ! $BRANCH_NAME =~ $PATTERN ]]; then
+            echo "❌ Branch name '$BRANCH_NAME' does not follow the required format."
+            echo "Expected format: <type>/<TICKET>-<short-summary>"
+            echo "Example: feat/ABC-123-add-course-lookup"
+            echo ""
+            echo "Valid types: feat, fix, chore, docs, style, refactor, perf, test, build, ci"
+            exit 1
+          fi
+
+          echo "✓ Branch name '$BRANCH_NAME' is valid."

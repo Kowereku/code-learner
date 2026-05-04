@@ -80,3 +80,19 @@ Examples:
 feat(ABC-123): add course lookup
 fix(PLAT-42): reject expired tokens
 ```
+
+## Branch Naming Convention
+
+Branches must follow the format: `<type>/<TICKET>-<short-summary>`
+
+Valid types: `feat`, `fix`, `chore`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`
+
+Examples:
+
+```text
+feat/ABC-123-add-course-lookup
+fix/PLAT-42-reject-expired-tokens
+docs/ABC-100-update-api-docs
+```
+
+The branch name is validated by a GitHub Action on every pull request.
