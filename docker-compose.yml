@@ -20,7 +20,6 @@ services:
     ports:
       - "8000:8000"
     environment:
-      # Inside the compose network the database is reachable as host "db".
       DATABASE_URL: postgresql+psycopg2://devuser:devpassword@db:5432/fastapi_db
     depends_on:
       db:
