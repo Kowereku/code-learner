@@ -22,5 +22,5 @@ COPY . .
 # 8. Expose the port
 EXPOSE 8000
 
-# 9. Start the server
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# 9. Apply DB migrations, then start the server.
+CMD ["sh", "-c", "alembic upgrade head && uvicorn src.main:app --host 0.0.0.0 --port 8000"]

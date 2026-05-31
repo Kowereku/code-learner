@@ -11,7 +11,7 @@ jobs:
       - name: Validate branch name format
         run: |
           BRANCH_NAME="${{ github.head_ref }}"
-          PATTERN='^(feat|fix|chore|docs|style|refactor|perf|test|build|ci)/[A-Z][A-Z0-9]+-\d+-[a-z0-9]+([-]?[a-z0-9]+)*$'
+          PATTERN='^(feat|fix|chore|docs|style|refactor|perf|test|build|ci)/[A-Z][A-Z0-9]+-[0-9]+-[a-z0-9]+([-]?[a-z0-9]+)*$'
 
           if [[ ! $BRANCH_NAME =~ $PATTERN ]]; then
             echo "❌ Branch name '$BRANCH_NAME' does not follow the required format."

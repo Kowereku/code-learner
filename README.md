@@ -2,21 +2,71 @@
 
 Python backend for beginner programming learning app.
 
+## Running with Docker
+
+The full stack (FastAPI app + Postgres) runs via Docker Compose. The `app` service waits for `db` to pass its healthcheck, then applies `alembic upgrade head` before starting the server.
+
+### Start the full stack
+
+Build the image and start both services:
+
+```bash
+make up
+```
+
+### Verify it is running
+
+The app is exposed on `localhost:8000`:
+
+```bash
+curl http://localhost:8000/
+```
+
+### Follow the logs
+
+Tail the app container output:
+
+```bash
+make logs
+```
+
+### Stop the stack
+
+Stop and remove the containers:
+
+```bash
+make down
+```
+
+## Local Development
+
+Run Postgres in Docker and the app directly on your machine. Inside Compose the app reaches the database as host `db`; locally `src/model/db.py` falls back to `localhost`.
+
+### Start Postgres only
+
+```bash
+make db-up
+```
+
+### Run the app with hot reload
+
+```bash
+make run-dev
+```
+
+### Stop Postgres
+
+```bash
+make db-down
+```
+
 ## Alembic Operations
 
 Alembic is configured to use the Postgres database defined in the project setup:
 
 `postgresql+psycopg2://devuser:devpassword@localhost:5432/fastapi_db`
 
-You can override that by setting `DATABASE_URL` before running Alembic.
-
-### Start the database
-
-If you are using Docker Compose, start Postgres first:
-
-```bash
-make db-up
-```
+You can override that by setting `DATABASE_URL` before running Alembic. Start Postgres first with `make db-up` (see [Local Development](#local-development)).
 
 ### Create a migration
 

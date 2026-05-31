@@ -1,4 +1,4 @@
-.PHONY: install req run-dev run db-up db-down hooks
+.PHONY: install req run-dev run migrate up down build logs db-up db-down hooks
 
 install:
 	uv sync
@@ -12,11 +12,26 @@ run-dev:
 run:
 	uv run uvicorn src.main:app
 
+migrate:
+	uv run alembic upgrade head
+
+up:
+	docker compose up -d --build
+
+down:
+	docker compose down
+
+build:
+	docker compose build
+
+logs:
+	docker compose logs -f app
+
 db-up:
-	docker compose up -d
+	docker compose up -d db
 
 db-down:
-	docker compose down
+	docker compose stop db
 
 hooks:
 	git config core.hooksPath .githooks
