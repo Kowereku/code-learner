@@ -1,10 +1,7 @@
-.PHONY: install req run-dev run migrate up down build logs db-up db-down hooks
+.PHONY: install run-dev run migrate up down build logs db-up db-down hooks
 
 install:
 	uv sync
-
-req:
-	uv pip freeze > requirements.txt
 
 run-dev:
 	uv run uvicorn src.main:app --reload
