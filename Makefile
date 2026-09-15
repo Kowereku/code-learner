@@ -1,4 +1,4 @@
-.PHONY: install run-dev run migrate up down build logs db-up db-down hooks
+.PHONY: install run-dev run migrate seed up down build logs db-up db-down hooks
 
 install:
 	uv sync
@@ -11,6 +11,9 @@ run:
 
 migrate:
 	uv run alembic upgrade head
+
+seed:
+	uv run python -m src.scripts.seed
 
 up:
 	docker compose up -d --build
