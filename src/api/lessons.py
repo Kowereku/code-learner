@@ -5,12 +5,12 @@ from sqlalchemy.orm import Session, joinedload
 
 from src.model.db import get_db
 from src.model.lesson import Lesson
-from src.schemas.lesson import LessonDetailRead
+from src.schemas.lesson import LessonDetailRead, LessonResponse
 
 router = APIRouter()
 
 
-@router.get("/{lesson_id}", response_model=LessonDetailRead)
+@router.get("/{lesson_id}", response_model=LessonResponse)
 def get_lesson(lesson_id: int, db: Session = Depends(get_db)):
     """Retrieve lesson details including its list of exercises for the learning view."""
     lesson = (

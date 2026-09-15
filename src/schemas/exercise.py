@@ -2,22 +2,24 @@ from __future__ import annotations
 
 from pydantic import BaseModel, ConfigDict
 
-from src.model.exercise import ExerciseType
-
 
 class ExerciseBase(BaseModel):
-    type: ExerciseType
+    type: str
     content: str
     code_snippet: str | None = None
     correct_answer: str
 
 
 class ExerciseCreate(ExerciseBase):
-    pass
+    lesson_id: int | None = None
 
 
-class ExerciseRead(ExerciseBase):
+class ExerciseResponse(ExerciseBase):
     id: int
     lesson_id: int
 
     model_config = ConfigDict(from_attributes=True)
+
+
+# Backward compatibility alias
+ExerciseRead = ExerciseResponse

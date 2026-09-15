@@ -24,5 +24,7 @@ class Module(Base):
 
     course: Mapped[Course] = relationship(back_populates="modules")
     lessons: Mapped[list[Lesson]] = relationship(
-        back_populates="module", cascade="all, delete-orphan"
+        back_populates="module",
+        cascade="all, delete-orphan",
+        order_by="Lesson.id",
     )

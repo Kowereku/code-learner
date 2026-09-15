@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
-from src.schemas.lesson import LessonRead
+from src.schemas.lesson import LessonResponse
 
 
 class ModuleBase(BaseModel):
@@ -11,17 +11,17 @@ class ModuleBase(BaseModel):
 
 
 class ModuleCreate(ModuleBase):
-    pass
+    course_id: int | None = None
 
 
-class ModuleRead(ModuleBase):
+class ModuleResponse(ModuleBase):
     id: int
     course_id: int
+    lessons: list[LessonResponse] = []
 
     model_config = ConfigDict(from_attributes=True)
 
 
-class ModuleDetailRead(ModuleRead):
-    lessons: list[LessonRead] = []
-
-    model_config = ConfigDict(from_attributes=True)
+# Backward compatibility aliases
+ModuleRead = ModuleResponse
+ModuleDetailRead = ModuleResponse

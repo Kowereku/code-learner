@@ -5,12 +5,12 @@ from sqlalchemy.orm import Session
 
 from src.model.db import get_db
 from src.model.exercise import Exercise
-from src.schemas.exercise import ExerciseRead
+from src.schemas.exercise import ExerciseRead, ExerciseResponse
 
 router = APIRouter()
 
 
-@router.get("/{exercise_id}", response_model=ExerciseRead)
+@router.get("/{exercise_id}", response_model=ExerciseResponse)
 def get_exercise(exercise_id: int, db: Session = Depends(get_db)):
     """Retrieve exercise details by ID, including starter code_snippet for Dual Mode."""
     exercise = db.query(Exercise).filter(Exercise.id == exercise_id).first()
