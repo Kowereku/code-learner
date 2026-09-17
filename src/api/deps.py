@@ -1,11 +1,10 @@
-from __future__ import annotations
-
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 import jwt
 from sqlalchemy.orm import Session
 
 from src.core.security import decode_access_token
+from src.crud import user as user_crud
 from src.model.db import get_db
 from src.model.user import User
 
@@ -31,7 +30,7 @@ def get_current_user(
     except (jwt.PyJWTError, ValueError, TypeError):
         raise credentials_exception
 
-    user = db.query(User).filter(User.id == user_id).first()
+    user = user_crud.get_user_by_id(db, user_id)
     if user is None:
         raise credentials_exception
     return user

@@ -1,11 +1,12 @@
-from __future__ import annotations
-
+import logging
 import os
 from datetime import datetime, timedelta, timezone
 from typing import Any
 
 import bcrypt
 import jwt
+
+logger = logging.getLogger(__name__)
 
 SECRET_KEY = os.getenv(
     "SECRET_KEY", "code-learner-super-secret-jwt-key-min-32-chars-change-in-prod"
@@ -23,13 +24,10 @@ def hash_password(password: str) -> str:
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Verify a plaintext password against an existing bcrypt hash."""
-    try:
-        return bcrypt.checkpw(
-            plain_password.encode("utf-8"),
-            hashed_password.encode("utf-8"),
-        )
-    except Exception:
-        return False
+    return bcrypt.checkpw(
+        plain_password.encode("utf-8"),
+        hashed_password.encode("utf-8"),
+    )
 
 
 def create_access_token(
@@ -48,7 +46,7 @@ def create_access_token(
 
 def decode_access_token(token: str) -> dict[str, Any]:
     """Decode and validate a JWT token string.
-    
+
     Raises jwt.PyJWTError subclasses on invalid or expired token.
     """
     return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
