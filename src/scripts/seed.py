@@ -7,18 +7,11 @@ or
     make seed
 """
 
-from __future__ import annotations
-
-import logging
-
 from src.model.course import Course
 from src.model.db import SessionLocal
 from src.model.exercise import Exercise, ExerciseType
 from src.model.lesson import Lesson
 from src.model.module import Module
-
-logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
-logger = logging.getLogger(__name__)
 
 
 def seed_database() -> None:
@@ -26,10 +19,10 @@ def seed_database() -> None:
     try:
         existing_course = db.query(Course).filter(Course.name == "Podstawy Pythona").first()
         if existing_course:
-            logger.info("Course 'Podstawy Pythona' already exists (ID: %s). Skipping seed.", existing_course.id)
+            print(f"Course 'Podstawy Pythona' already exists (ID: {existing_course.id}). Skipping seed.")
             return
 
-        logger.info("Seeding initial course: 'Podstawy Pythona'...")
+        print("Seeding initial course: 'Podstawy Pythona'...")
         course = Course(
             name="Podstawy Pythona",
             description=(
@@ -97,16 +90,12 @@ def seed_database() -> None:
         db.add(ex_3)
 
         db.commit()
-        logger.info(
-            "Database successfully seeded! Created Course (ID: %s) with %s modules, %s lessons, and %s exercises.",
-            course.id,
-            1,
-            2,
-            3,
+        print(
+            f"Database successfully seeded! Created Course (ID: {course.id}) with 1 modules, 2 lessons, and 3 exercises."
         )
-    except Exception:
+    except Exception as e:
         db.rollback()
-        logger.exception("Error occurred while seeding the database.")
+        print(f"Error occurred while seeding the database: {e}")
         raise
     finally:
         db.close()

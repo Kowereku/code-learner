@@ -1,15 +1,9 @@
-from __future__ import annotations
-
 import enum
-from typing import TYPE_CHECKING
 
 from sqlalchemy import BigInteger, Enum as SAEnum, ForeignKey, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.model.db import Base
-
-if TYPE_CHECKING:
-    from src.model.lesson import Lesson
 
 
 class ExerciseType(str, enum.Enum):
@@ -33,4 +27,4 @@ class Exercise(Base):
     code_snippet: Mapped[str | None] = mapped_column(Text, nullable=True)
     correct_answer: Mapped[str] = mapped_column(Text, nullable=False)
 
-    lesson: Mapped[Lesson] = relationship(back_populates="exercises")
+    lesson: Mapped["Lesson"] = relationship(back_populates="exercises")

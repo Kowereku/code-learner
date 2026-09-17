@@ -4,12 +4,18 @@ Provides REST API endpoints for curriculum navigation (courses, modules, lessons
 Dual Mode (Blockly <-> Monaco Editor) exercise delivery, and user learning progress.
 """
 
-from __future__ import annotations
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+)
+logger = logging.getLogger(__name__)
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from src.api import api_router
+from src.api import courses, exercises, lessons
 
 app = FastAPI(
     title="ZaPi App",
@@ -34,7 +40,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(api_router)
+app.include_router(courses.router, prefix="/api/courses", tags=["courses"])
+app.include_router(lessons.router, prefix="/api/lessons", tags=["lessons"])
+app.include_router(exercises.router, prefix="/api/exercises", tags=["exercises"])
 
 
 @app.get("/", summary="Health Check", tags=["monitoring"])

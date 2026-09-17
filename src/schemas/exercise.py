@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from pydantic import BaseModel, ConfigDict
 
 from src.model.exercise import ExerciseType
@@ -12,12 +10,19 @@ class ExerciseBase(BaseModel):
     correct_answer: str
 
 
-class ExerciseCreate(ExerciseBase):
-    pass
+class ExerciseCreate(BaseModel):
+    type: ExerciseType
+    content: str
+    code_snippet: str | None = None
+    correct_answer: str
 
 
-class ExerciseRead(ExerciseBase):
+class ExerciseRead(BaseModel):
     id: int
     lesson_id: int
+    type: ExerciseType
+    content: str
+    code_snippet: str | None = None
+    correct_answer: str
 
     model_config = ConfigDict(from_attributes=True)
