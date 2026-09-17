@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from pydantic import BaseModel, Field
 
 
@@ -12,7 +10,7 @@ class LoginData(BaseModel):
         examples=["john_doe", "john@example.com"],
     )
     password: str = Field(
-        ..., min_length=1, description="Account password", examples=["secret123"]
+        ..., min_length=1, max_length=32, description="Account password", examples=["secret123"]
     )
 
 
