@@ -18,8 +18,11 @@ class Lesson(Base):
 
     module: Mapped["Module"] = relationship(back_populates="lessons")
     exercises: Mapped[list["Exercise"]] = relationship(
-        back_populates="lesson", cascade="all, delete-orphan"
+        back_populates="lesson",
+        cascade="all, delete-orphan",
+        order_by="Exercise.id",
     )
+    user_links: Mapped[list["UserLesson"]] = relationship(
     user_links: Mapped[list["UserLesson"]] = relationship(
         back_populates="lesson", cascade="all, delete-orphan"
     )
