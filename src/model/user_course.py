@@ -1,16 +1,9 @@
-from __future__ import annotations
-
 from datetime import datetime
-from typing import TYPE_CHECKING
 
 from sqlalchemy import BigInteger, Boolean, DateTime, ForeignKey, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.model.db import Base
-
-if TYPE_CHECKING:
-    from src.model.course import Course
-    from src.model.user import User
 
 
 class UserCourse(Base):
@@ -33,5 +26,5 @@ class UserCourse(Base):
         Boolean, nullable=False, default=True, server_default="true"
     )
 
-    user: Mapped[User] = relationship(back_populates="course_links")
-    course: Mapped[Course] = relationship(back_populates="user_links")
+    user: Mapped["User"] = relationship(back_populates="course_links")
+    course: Mapped["Course"] = relationship(back_populates="user_links")
