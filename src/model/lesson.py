@@ -1,16 +1,7 @@
-from __future__ import annotations
-
-from typing import TYPE_CHECKING
-
 from sqlalchemy import BigInteger, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.model.db import Base
-
-if TYPE_CHECKING:
-    from src.model.exercise import Exercise
-    from src.model.module import Module
-    from src.model.user_lesson import UserLesson
 
 
 class Lesson(Base):
@@ -25,12 +16,12 @@ class Lesson(Base):
         BigInteger, nullable=False, default=0, server_default="0"
     )
 
-    module: Mapped[Module] = relationship(back_populates="lessons")
-    exercises: Mapped[list[Exercise]] = relationship(
+    module: Mapped["Module"] = relationship(back_populates="lessons")
+    exercises: Mapped[list["Exercise"]] = relationship(
         back_populates="lesson",
         cascade="all, delete-orphan",
         order_by="Exercise.id",
     )
-    user_links: Mapped[list[UserLesson]] = relationship(
+    user_links: Mapped[list["UserLesson"]] = relationship(
         back_populates="lesson", cascade="all, delete-orphan"
     )
