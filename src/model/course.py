@@ -18,6 +18,5 @@ class Course(Base):
         order_by="Module.order_index",
     )
     user_links: Mapped[list["UserCourse"]] = relationship(
-    user_links: Mapped[list["UserCourse"]] = relationship(
         back_populates="course", cascade="all, delete-orphan"
     )

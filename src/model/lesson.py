@@ -23,6 +23,5 @@ class Lesson(Base):
         order_by="Exercise.id",
     )
     user_links: Mapped[list["UserLesson"]] = relationship(
-    user_links: Mapped[list["UserLesson"]] = relationship(
         back_populates="lesson", cascade="all, delete-orphan"
     )
