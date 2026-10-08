@@ -123,7 +123,6 @@ def seed_database(force: bool = False) -> None:
         )
         db.add_all([ex_py_1, ex_py_2])
 
-        # Five questions per lesson, as in Figma (progress moves in 20% steps).
         ex_py_18 = Exercise(
             lesson_id=lesson_py_1_1.id,
             type=ExerciseType.multiple_choice,

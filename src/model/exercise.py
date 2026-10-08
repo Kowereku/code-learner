@@ -26,7 +26,5 @@ class Exercise(Base):
     content: Mapped[str] = mapped_column(Text, nullable=False)
     code_snippet: Mapped[str | None] = mapped_column(Text, nullable=True)
     correct_answer: Mapped[str] = mapped_column(Text, nullable=False)
-    # Shape depends on type: choices / tiles (list[str]) or matching pairs (list[[left, right]]).
     options: Mapped[list | None] = mapped_column(JSON, nullable=True)
-
     lesson: Mapped["Lesson"] = relationship(back_populates="exercises")
