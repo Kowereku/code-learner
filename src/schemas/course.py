@@ -24,6 +24,7 @@ class CourseListItem(BaseModel):
     description: str | None = None
     icon_url: str | None = None
     modules_count: int = 0
+    lessons_count: int = 0
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -35,6 +36,7 @@ class CourseListItem(BaseModel):
             description=course.description,
             icon_url=course.icon_url,
             modules_count=len(course.modules),
+            lessons_count=sum(len(module.lessons) for module in course.modules),
         )
 
 
