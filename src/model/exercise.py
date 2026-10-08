@@ -1,6 +1,6 @@
 import enum
 
-from sqlalchemy import BigInteger, ForeignKey, String, Text
+from sqlalchemy import JSON, BigInteger, ForeignKey, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.model.db import Base
@@ -26,5 +26,5 @@ class Exercise(Base):
     content: Mapped[str] = mapped_column(Text, nullable=False)
     code_snippet: Mapped[str | None] = mapped_column(Text, nullable=True)
     correct_answer: Mapped[str] = mapped_column(Text, nullable=False)
-
+    options: Mapped[list | None] = mapped_column(JSON, nullable=True)
     lesson: Mapped["Lesson"] = relationship(back_populates="exercises")
