@@ -136,6 +136,7 @@ dependencies = [
     { name = "psycopg2-binary" },
     { name = "pydantic" },
     { name = "pyjwt" },
+    { name = "python-dotenv" },
     { name = "sqlalchemy" },
     { name = "uvicorn", extra = ["standard"] },
 ]
@@ -149,6 +150,7 @@ requires-dist = [
     { name = "psycopg2-binary" },
     { name = "pydantic", specifier = ">=2.13.3" },
     { name = "pyjwt", specifier = ">=2.13.0" },
+    { name = "python-dotenv", specifier = ">=1.2.2" },
     { name = "sqlalchemy" },
     { name = "uvicorn", extras = ["standard"] },
 ]
