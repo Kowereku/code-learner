@@ -25,6 +25,7 @@ class CourseListItem(BaseModel):
     description: str | None = None
     icon_url: str | None = None
     modules_count: int = 0
+    lessons_count: int = 0
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -44,6 +45,7 @@ class CourseListItem(BaseModel):
                 "description": getattr(data, "description", None),
                 "icon_url": getattr(data, "icon_url", None),
                 "modules_count": len(modules) if modules is not None else 0,
+                "lessons_count": sum(len(module.lessons) for module in modules or []),
             }
         return data
 

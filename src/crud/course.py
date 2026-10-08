@@ -11,7 +11,7 @@ def get_courses(db: Session, skip: int = 0, limit: int = 100) -> list[Course]:
     """Retrieve all available courses from the database with pagination."""
     return (
         db.query(Course)
-        .options(selectinload(Course.modules))
+        .options(selectinload(Course.modules).selectinload(Module.lessons))
         .offset(skip)
         .limit(limit)
         .all()

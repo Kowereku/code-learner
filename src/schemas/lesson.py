@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 from src.schemas.exercise import ExerciseRead
 
@@ -30,3 +30,7 @@ class LessonDetailRead(BaseModel):
     exercises: list[ExerciseRead] = []
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class LessonComplete(BaseModel):
+    mistakes_made: int = Field(default=0, ge=0)
