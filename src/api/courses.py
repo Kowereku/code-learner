@@ -1,9 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
+from src.api.deps import get_current_user
 from src.crud import course as course_crud
+from src.crud import user_course as user_course_crud
 from src.model.db import get_db
+from src.model.user import User
 from src.schemas.course import CourseCreate, CourseRead, CourseTreeRead
+from src.schemas.user_course import UserCourseRead
 
 router = APIRouter()
 
@@ -42,3 +46,20 @@ def get_course_tree(course_id: int, db: Session = Depends(get_db)):
             detail=f"Course with ID {course_id} not found.",
         )
     return course
+
+
+@router.post(
+    "/{course_id}/enroll",
+    response_model=UserCourseRead,
+    status_code=status.HTTP_201_CREATED,
+    summary="Enroll current user in course by ID",
+)
+def enroll_course(
+    course_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Enroll the currently authenticated user in the specified course."""
+    return user_course_crud.enroll_user_in_course(
+        db, user_id=current_user.id, course_id=course_id
+    )
