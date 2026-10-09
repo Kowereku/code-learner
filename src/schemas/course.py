@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict, model_validator
@@ -53,11 +51,6 @@ class CourseDetail(BaseModel):
     name: str
     description: str | None = None
     icon_url: str | None = None
-    modules: list[ModuleDetailRead] = []
+    modules: list["ModuleDetailRead"] = []
 
     model_config = ConfigDict(from_attributes=True)
-
-
-# Backward-compatibility aliases
-CourseRead = CourseListItem
-CourseTreeRead = CourseDetail
