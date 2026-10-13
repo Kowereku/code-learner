@@ -24,6 +24,8 @@ from src.schemas import (
     TokenPayload,
     UserBase,
     UserCreate,
+    UserProgressRead,
+    UserProgressUpdate,
     UserRead,
 )
 
@@ -53,4 +55,6 @@ __all__ = [
     "UserBase",
     "UserCreate",
     "UserRead",
+    "UserProgressUpdate",
+    "UserProgressRead",
 ]
