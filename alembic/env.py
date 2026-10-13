@@ -24,6 +24,7 @@ config.set_main_option(
 )
 
 from src.model.db import Base
+import src.model  # noqa: F401 - registers all models on Base.metadata
 
 target_metadata = Base.metadata
 
