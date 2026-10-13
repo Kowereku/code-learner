@@ -20,15 +20,20 @@ def get_completed_lessons(db: Session, user_id: int) -> list[tuple[int, int]]:
 
 
 def complete_lesson(db: Session, user: User, lesson: Lesson, mistakes_made: int) -> User:
-    """Mark a lesson completed; XP is awarded only on the first completion."""
+    """Mark a lesson completed, keeping the best attempt (fewest mistakes).
+
+    XP and completed_at are set only on the first completion.
+    """
     user_lesson = db.get(UserLesson, (user.id, lesson.id))
     if user_lesson is None:
         user_lesson = UserLesson(user_id=user.id, lesson_id=lesson.id)
         db.add(user_lesson)
     if user_lesson.completed_at is None:
         user.total_xp += lesson.xp_reward
-    user_lesson.completed_at = datetime.now(timezone.utc)
-    user_lesson.mistakes_made = mistakes_made
+        user_lesson.completed_at = datetime.now(timezone.utc)
+        user_lesson.mistakes_made = mistakes_made
+    elif mistakes_made < user_lesson.mistakes_made:
+        user_lesson.mistakes_made = mistakes_made
     db.commit()
     db.refresh(user)
     return user
