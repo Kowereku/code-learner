@@ -30,7 +30,7 @@ def complete_lesson(
     lesson_in: LessonComplete,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
-):
+) -> UserRead:
     """Mark a lesson as completed by the current user, awarding XP on the first completion."""
     lesson = lesson_crud.get_lesson_by_id(db, lesson_id)
     if not lesson:
@@ -38,4 +38,5 @@ def complete_lesson(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Lesson with ID {lesson_id} not found.",
         )
-    return progress_crud.complete_lesson(db, current_user, lesson, lesson_in.mistakes_made)
+    user = progress_crud.complete_lesson(db, current_user, lesson, lesson_in.mistakes_made)
+    return UserRead.model_validate(user)
