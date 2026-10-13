@@ -9,6 +9,7 @@ from src.model import (
     User,
     UserCourse,
     UserLesson,
+    UserProgress,
 )
 
 __all__ = [
@@ -21,4 +22,5 @@ __all__ = [
     "User",
     "UserCourse",
     "UserLesson",
+    "UserProgress",
 ]
