@@ -1,18 +1,13 @@
 import logging
-import os
 from datetime import datetime, timedelta, timezone
 from typing import Any
 
 import bcrypt
 import jwt
 
-logger = logging.getLogger(__name__)
+from src.core.config import ACCESS_TOKEN_EXPIRE_MINUTES, ALGORITHM, SECRET_KEY
 
-SECRET_KEY = os.getenv(
-    "SECRET_KEY", "code-learner-super-secret-jwt-key-min-32-chars-change-in-prod"
-)
-ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
-ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "1440"))
+logger = logging.getLogger(__name__)
 
 
 def hash_password(password: str) -> str:
