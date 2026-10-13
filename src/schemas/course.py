@@ -1,7 +1,8 @@
-from typing import Any
+from typing import Self
 
-from pydantic import BaseModel, ConfigDict, model_validator
+from pydantic import BaseModel, ConfigDict
 
+from src.model.course import Course
 from src.schemas.module import ModuleDetailRead
 
 
@@ -26,24 +27,15 @@ class CourseListItem(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
-    @model_validator(mode="before")
     @classmethod
-    def set_modules_count(cls, data: Any) -> Any:
-        if isinstance(data, dict):
-            if "modules_count" not in data and "modules" in data:
-                modules = data.get("modules")
-                data["modules_count"] = len(modules) if modules is not None else 0
-            return data
-        if hasattr(data, "modules"):
-            modules = getattr(data, "modules", None)
-            return {
-                "id": getattr(data, "id", None),
-                "name": getattr(data, "name", None),
-                "description": getattr(data, "description", None),
-                "icon_url": getattr(data, "icon_url", None),
-                "modules_count": len(modules) if modules is not None else 0,
-            }
-        return data
+    def from_course(cls, course: Course) -> Self:
+        return cls(
+            id=course.id,
+            name=course.name,
+            description=course.description,
+            icon_url=course.icon_url,
+            modules_count=len(course.modules),
+        )
 
 
 class CourseDetail(BaseModel):

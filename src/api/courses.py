@@ -13,15 +13,16 @@ def list_courses(
     skip: int = Query(default=0, ge=0, description="Number of courses to skip"),
     limit: int = Query(default=100, ge=1, le=100, description="Max number of courses to return"),
     db: Session = Depends(get_db),
-):
+) -> list[CourseListItem]:
     """Retrieve all available courses."""
-    return course_crud.get_courses(db, skip=skip, limit=limit)
+    courses = course_crud.get_courses(db, skip=skip, limit=limit)
+    return [CourseListItem.from_course(course) for course in courses]
 
 
 @router.post("", response_model=CourseListItem, status_code=status.HTTP_201_CREATED)
-def create_course(course_in: CourseCreate, db: Session = Depends(get_db)):
+def create_course(course_in: CourseCreate, db: Session = Depends(get_db)) -> CourseListItem:
     """Create a new course."""
-    return course_crud.create_course(db, course_in)
+    return CourseListItem.from_course(course_crud.create_course(db, course_in))
 
 
 @router.get("/{course_id}", response_model=CourseDetail)
