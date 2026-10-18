@@ -16,6 +16,7 @@ class CourseCreate(BaseModel):
     name: str
     description: str | None = None
     icon_url: str | None = None
+    language: str
 
 
 class CourseListItem(BaseModel):
@@ -45,6 +46,7 @@ class CourseDetail(BaseModel):
     name: str
     description: str | None = None
     icon_url: str | None = None
+    language: str
     modules: list["ModuleDetailRead"] = []
 
     model_config = ConfigDict(from_attributes=True)

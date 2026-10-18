@@ -11,6 +11,7 @@ class Course(Base):
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
     icon_url: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    language: Mapped[str] = mapped_column(String(50), nullable=False)
 
     modules: Mapped[list["Module"]] = relationship(
         back_populates="course",
