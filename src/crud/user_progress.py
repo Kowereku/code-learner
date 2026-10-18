@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from datetime import datetime, timezone
 
 from sqlalchemy.orm import Session
@@ -37,21 +35,16 @@ def upsert_user_progress(
     if progress:
         if "status" in update_data and update_data["status"] is not None:
             progress.status = update_data["status"]
-            if progress.status == "completed" and progress.completed_at is None:
-                progress.completed_at = datetime.now(timezone.utc)
         if "last_position" in update_data:
             progress.last_position = update_data["last_position"]
+        progress.updated_at = datetime.now(timezone.utc)
     else:
         status_val = update_data.get("status") or "in_progress"
-        completed_at = (
-            datetime.now(timezone.utc) if status_val == "completed" else None
-        )
         progress = UserLesson(
             user_id=user_id,
             lesson_id=lesson_id,
             status=status_val,
             last_position=update_data.get("last_position"),
-            completed_at=completed_at,
         )
         db.add(progress)
 

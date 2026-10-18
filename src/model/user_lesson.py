@@ -1,16 +1,10 @@
-from __future__ import annotations
-
 from datetime import datetime
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 from sqlalchemy import BigInteger, DateTime, ForeignKey, JSON, String, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.model.db import Base
-
-if TYPE_CHECKING:
-    from src.model.lesson import Lesson
-    from src.model.user import User
 
 
 class UserLesson(Base):
@@ -55,6 +49,3 @@ class UserLesson(Base):
 
     user: Mapped["User"] = relationship(back_populates="lesson_links")
     lesson: Mapped["Lesson"] = relationship(back_populates="user_links")
-
-
-UserProgress = UserLesson

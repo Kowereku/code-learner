@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from src.schemas.course import CourseRead
+from src.schemas.course import CourseListItem
 
 
 class UserCourseBase(BaseModel):
@@ -24,6 +24,6 @@ class UserCourseRead(BaseModel):
     course_id: int
     enrolled_at: datetime
     is_active: bool
-    course: CourseRead | None = None
+    course: CourseListItem | None = None
 
     model_config = ConfigDict(from_attributes=True)

@@ -9,8 +9,6 @@ or
     .venv/Scripts/python.exe src/scripts/seed_mock_data.py
 """
 
-from __future__ import annotations
-
 import logging
 import sys
 
