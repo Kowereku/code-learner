@@ -1,4 +1,4 @@
-from sqlalchemy import BigInteger, ForeignKey, String
+from sqlalchemy import BigInteger, Boolean, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.model.db import Base
@@ -14,6 +14,9 @@ class Lesson(Base):
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     xp_reward: Mapped[int] = mapped_column(
         BigInteger, nullable=False, default=0, server_default="0"
+    )
+    is_quiz: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=False, server_default="false"
     )
 
     module: Mapped["Module"] = relationship(back_populates="lessons")

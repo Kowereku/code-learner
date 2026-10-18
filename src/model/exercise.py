@@ -13,6 +13,7 @@ class ExerciseType(str, enum.Enum):
     true_false = "true_false"
     block_assembly = "block_assembly"
     matching = "matching"
+    chat = "chat"
 
 
 class Exercise(Base):

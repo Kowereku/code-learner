@@ -360,6 +360,103 @@ def seed_database(force: bool = False) -> None:
         )
         db.add(ex_py_9)
 
+        module_py_quiz = Module(
+            course_id=course_python.id,
+            title="Final quiz",
+            order_index=4,
+        )
+        db.add(module_py_quiz)
+        db.flush()
+
+        lesson_py_quiz = Lesson(
+            module_id=module_py_quiz.id,
+            title="Final quiz",
+            xp_reward=50,
+            is_quiz=True,
+        )
+        db.add(lesson_py_quiz)
+        db.flush()
+
+        db.add_all(
+            [
+                Exercise(
+                    lesson_id=lesson_py_quiz.id,
+                    type=ExerciseType.multiple_choice,
+                    content="What does print(3 + 4) display?",
+                    correct_answer="7",
+                    options=["7", "3 + 4", "34", "An error"],
+                ),
+                Exercise(
+                    lesson_id=lesson_py_quiz.id,
+                    type=ExerciseType.multiple_choice,
+                    content="Which line creates a variable named age with the value 20?",
+                    correct_answer="age = 20",
+                    options=["age = 20", "20 = age", "age == 20", "var age = 20"],
+                ),
+                Exercise(
+                    lesson_id=lesson_py_quiz.id,
+                    type=ExerciseType.multiple_choice,
+                    content='What does this code print?\nx = 5\nif x > 3:\n    print("big")\nelse:\n    print("small")',
+                    correct_answer="big",
+                    options=["big", "small", "big small", "Nothing"],
+                ),
+                Exercise(
+                    lesson_id=lesson_py_quiz.id,
+                    type=ExerciseType.multiple_choice,
+                    content="How many numbers does this loop print?\ni = 0\nwhile i < 3:\n    print(i)\n    i += 1",
+                    correct_answer="3",
+                    options=["3", "2", "4", "It never stops"],
+                ),
+                Exercise(
+                    lesson_id=lesson_py_quiz.id,
+                    type=ExerciseType.multiple_choice,
+                    content='What is fruits[1] if fruits = ["apple", "banana", "cherry"]?',
+                    correct_answer='"banana"',
+                    options=['"banana"', '"apple"', '"cherry"', "An error"],
+                ),
+                Exercise(
+                    lesson_id=lesson_py_quiz.id,
+                    type=ExerciseType.multiple_choice,
+                    content="What does this loop print?\nfor n in [1, 2, 3]:\n    print(n * 2)",
+                    correct_answer="2, 4 and 6",
+                    options=["2, 4 and 6", "1, 2 and 3", "Only 6", "2, 2 and 2"],
+                ),
+                Exercise(
+                    lesson_id=lesson_py_quiz.id,
+                    type=ExerciseType.multiple_choice,
+                    content='How do you read the value of the key "name" from person = {"name": "Anna"}?',
+                    correct_answer='person["name"]',
+                    options=['person["name"]', "person[0]", "person.name()", 'person("name")'],
+                ),
+                Exercise(
+                    lesson_id=lesson_py_quiz.id,
+                    type=ExerciseType.multiple_choice,
+                    content="What does a function return if it has no return statement?",
+                    correct_answer="None",
+                    options=["None", "0", "An empty string", "It causes an error"],
+                ),
+                Exercise(
+                    lesson_id=lesson_py_quiz.id,
+                    type=ExerciseType.chat,
+                    content="In your own words, what is the difference between a list and a dictionary?",
+                    correct_answer=(
+                        "A list holds ordered items that you access by their numeric index; "
+                        "a dictionary holds key-value pairs that you access by key."
+                    ),
+                ),
+                Exercise(
+                    lesson_id=lesson_py_quiz.id,
+                    type=ExerciseType.chat,
+                    content="Why do we write functions instead of copying the same code in several places?",
+                    correct_answer=(
+                        "A function lets you write code once and reuse it by calling it, optionally with "
+                        "different arguments, so the program is shorter, easier to read and a change is "
+                        "made in one place."
+                    ),
+                ),
+            ]
+        )
+
         # =========================================================================
         # Course 2: React Fundamentals
         # =========================================================================
@@ -639,6 +736,129 @@ def seed_database(force: bool = False) -> None:
             correct_answer='fetch("/api/courses")',
         )
         db.add(ex_react_8)
+
+        module_react_quiz = Module(
+            course_id=course_react.id,
+            title="Final quiz",
+            order_index=4,
+        )
+        db.add(module_react_quiz)
+        db.flush()
+
+        lesson_react_quiz = Lesson(
+            module_id=module_react_quiz.id,
+            title="Final quiz",
+            xp_reward=50,
+            is_quiz=True,
+        )
+        db.add(lesson_react_quiz)
+        db.flush()
+
+        db.add_all(
+            [
+                Exercise(
+                    lesson_id=lesson_react_quiz.id,
+                    type=ExerciseType.multiple_choice,
+                    content="What is a React component?",
+                    correct_answer="A function that returns JSX describing part of the UI",
+                    options=[
+                        "A function that returns JSX describing part of the UI",
+                        "A CSS file with styles",
+                        "A database table",
+                        "An HTML file loaded by the browser",
+                    ],
+                ),
+                Exercise(
+                    lesson_id=lesson_react_quiz.id,
+                    type=ExerciseType.multiple_choice,
+                    content="How do you show the value of the variable name inside JSX?",
+                    correct_answer="{name}",
+                    options=["{name}", "${name}", "{{name}}", "(name)"],
+                ),
+                Exercise(
+                    lesson_id=lesson_react_quiz.id,
+                    type=ExerciseType.multiple_choice,
+                    content="How does a parent component pass data to a child component?",
+                    correct_answer='With props, like <Child title="Hi" />',
+                    options=[
+                        'With props, like <Child title="Hi" />',
+                        "With a global variable",
+                        "By calling the child function directly",
+                        "With useEffect",
+                    ],
+                ),
+                Exercise(
+                    lesson_id=lesson_react_quiz.id,
+                    type=ExerciseType.multiple_choice,
+                    content="What does const [count, setCount] = useState(0) give you?",
+                    correct_answer="The current value and a function to update it",
+                    options=[
+                        "The current value and a function to update it",
+                        "Two copies of the value 0",
+                        "A function and its return value",
+                        "A list with one element",
+                    ],
+                ),
+                Exercise(
+                    lesson_id=lesson_react_quiz.id,
+                    type=ExerciseType.multiple_choice,
+                    content="Which attribute runs handleClick when a button is clicked?",
+                    correct_answer="onClick={handleClick}",
+                    options=[
+                        "onClick={handleClick}",
+                        'onclick="handleClick()"',
+                        "click={handleClick}",
+                        "onPress={handleClick}",
+                    ],
+                ),
+                Exercise(
+                    lesson_id=lesson_react_quiz.id,
+                    type=ExerciseType.multiple_choice,
+                    content="What does {isLoggedIn ? <Profile /> : <Login />} render when isLoggedIn is false?",
+                    correct_answer="<Login />",
+                    options=["<Login />", "<Profile />", "Both components", "Nothing"],
+                ),
+                Exercise(
+                    lesson_id=lesson_react_quiz.id,
+                    type=ExerciseType.multiple_choice,
+                    content="When does useEffect(() => { ... }, []) run?",
+                    correct_answer="Once, after the first render",
+                    options=[
+                        "Once, after the first render",
+                        "After every render",
+                        "Before the first render",
+                        "Only when the user clicks",
+                    ],
+                ),
+                Exercise(
+                    lesson_id=lesson_react_quiz.id,
+                    type=ExerciseType.multiple_choice,
+                    content="Where should a function component start fetching data from an API?",
+                    correct_answer="Inside useEffect",
+                    options=["Inside useEffect", "Directly in the JSX", "Inside useState", "In the CSS file"],
+                ),
+                Exercise(
+                    lesson_id=lesson_react_quiz.id,
+                    type=ExerciseType.chat,
+                    content="Why do we store a counter with useState instead of a normal variable?",
+                    correct_answer=(
+                        "Calling the state setter makes React re-render the component with the new value; "
+                        "changing a normal variable doesn't trigger a re-render and the variable is reset "
+                        "on every render."
+                    ),
+                ),
+                Exercise(
+                    lesson_id=lesson_react_quiz.id,
+                    type=ExerciseType.chat,
+                    content="Why does useEffect take a dependency array, and what happens when it is empty?",
+                    correct_answer=(
+                        "The dependency array tells React when to run the effect again: only when one of "
+                        "the listed values changes. With an empty array the effect runs only once, after "
+                        "the first render."
+                    ),
+                ),
+            ]
+        )
 
         db.commit()
         print(

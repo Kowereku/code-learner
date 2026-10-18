@@ -18,6 +18,7 @@ class LessonRead(BaseModel):
     module_id: int
     title: str
     xp_reward: int = 0
+    is_quiz: bool = False
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -27,6 +28,7 @@ class LessonDetailRead(BaseModel):
     module_id: int
     title: str
     xp_reward: int = 0
+    is_quiz: bool = False
     exercises: list[ExerciseRead] = []
 
     model_config = ConfigDict(from_attributes=True)
