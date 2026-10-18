@@ -74,6 +74,7 @@ def seed_database(force: bool = False) -> None:
                 "combining intuitive visual blocks with real code in a text editor."
             ),
             icon_url="https://raw.githubusercontent.com/github/explore/main/topics/python/python.png",
+            language="python",
         )
         db.add(course_python)
         db.flush()
@@ -370,6 +371,7 @@ def seed_database(force: bool = False) -> None:
                 "Learn functional components, JSX syntax, state management (useState), and side effects (useEffect)."
             ),
             icon_url="https://raw.githubusercontent.com/github/explore/main/topics/react/react.png",
+            language="jsx",
         )
         db.add(course_react)
         db.flush()

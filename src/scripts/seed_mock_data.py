@@ -52,6 +52,7 @@ def seed_mock_data(force: bool = False) -> None:
                 "Build interactive websites, modern user interfaces, and dynamic "
                 "web applications from scratch."
             ),
+            language="javascript",
         )
 
         # Course 2: Data Science & AI
@@ -62,6 +63,7 @@ def seed_mock_data(force: bool = False) -> None:
                 "Analyze complex data, train machine learning models, and explore "
                 "artificial intelligence using Python."
             ),
+            language="python",
         )
 
         # Course 3: Backend Engineering
@@ -72,6 +74,7 @@ def seed_mock_data(force: bool = False) -> None:
                 "Design the invisible logic, manage databases, and build scalable "
                 "server architectures that power the web."
             ),
+            language="python",
         )
 
         # Course 4: Cybersecurity & Linux
@@ -82,6 +85,7 @@ def seed_mock_data(force: bool = False) -> None:
                 "Master the command line, identify system vulnerabilities, and learn "
                 "the fundamentals of secure network infrastructure."
             ),
+            language="bash",
         )
 
         # Cascade under "Data Science & AI": Module -> Lesson -> Exercises

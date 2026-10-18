@@ -35,6 +35,7 @@ def create_course(db: Session, course_in: CourseCreate) -> Course:
         name=course_in.name,
         description=course_in.description,
         icon_url=course_in.icon_url,
+        language=course_in.language,
     )
     db.add(course)
     db.commit()
