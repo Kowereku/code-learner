@@ -1,7 +1,7 @@
 """add progress fields to user_lessons
 
 Revision ID: 83f343a2c723
-Revises: ae28da3082cd
+Revises: 24d19ecfaebc
 Create Date: 2026-10-13 11:33:18.601971
 
 """
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision: str = '83f343a2c723'
-down_revision: Union[str, Sequence[str], None] = 'ae28da3082cd'
+down_revision: Union[str, Sequence[str], None] = '24d19ecfaebc'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

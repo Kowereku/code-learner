@@ -12,7 +12,6 @@ from src.model.module import Module
 from src.model.user import User
 from src.model.user_course import UserCourse
 from src.model.user_lesson import UserLesson
-from src.model.user_progress import UserProgress
 
 __all__ = [
     "Base",
@@ -24,5 +23,4 @@ __all__ = [
     "User",
     "UserCourse",
     "UserLesson",
-    "UserProgress",
 ]
