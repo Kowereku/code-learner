@@ -40,4 +40,5 @@ ai-up:
 	docker compose up -d ollama
 
 ai-pull:
-	docker compose exec ollama ollama pull qwen2.5:3b
+	docker compose exec ollama ollama pull qwen2.5-coder:7b
+	docker compose exec ollama ollama pull gemma3:4b

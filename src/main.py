@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from src.api import auth, courses, exercises, lessons, progress
+from src.api import ai, auth, courses, exercises, lessons, progress
 
 app = FastAPI(
     title="ZaPi App",
@@ -45,6 +45,7 @@ app.include_router(lessons.router, prefix="/api/lessons", tags=["lessons"])
 app.include_router(exercises.router, prefix="/api/exercises", tags=["exercises"])
 app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
 app.include_router(progress.router, prefix="/api/progress", tags=["progress"])
+app.include_router(ai.router, prefix="/api/ai", tags=["ai"])
 
 
 @app.get("/", summary="Health Check", tags=["monitoring"])
