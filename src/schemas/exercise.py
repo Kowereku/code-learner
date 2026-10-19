@@ -39,8 +39,17 @@ class ChatMessage(BaseModel):
 
 class ExerciseChat(BaseModel):
     messages: list[ChatMessage] = Field(min_length=1, max_length=20)
+    locale: str = Field(min_length=2, max_length=10)
+
+
+class ExerciseCheck(BaseModel):
+    answer: str = Field(min_length=1, max_length=5000)
 
 
 class ExerciseChatRead(BaseModel):
     passed: bool
     reply: str = Field(min_length=1, max_length=1000)
+
+
+class ExerciseCheckRead(BaseModel):
+    passed: bool

@@ -182,8 +182,8 @@ def seed_database(force: bool = False) -> None:
             lesson_id=lesson_py_1_2.id,
             type=ExerciseType.code,
             content=(
-                "Check if the variable 'score' is greater than or equal to 50. "
-                "If so, print 'Pass', otherwise print 'Retake'."
+                "Create a variable 'score' with the value 75. If score is greater than or "
+                "equal to 50, print 'Pass', otherwise print 'Retake'."
             ),
             translations={
                 "pl": {
@@ -297,7 +297,7 @@ def seed_database(force: bool = False) -> None:
         ex_py_6 = Exercise(
             lesson_id=lesson_py_2_2.id,
             type=ExerciseType.code,
-            content="Use a for loop to print every number from the list [1, 2, 3].",
+            content="Create a list named 'numbers' with the values 1, 2 and 3, then use a for loop to print every number from it.",
             translations={
                 "pl": {
                     "content": "Utwórz listę o nazwie 'numbers' z wartościami 1, 2 i 3, a następnie użyj pętli for, aby wypisać każdą liczbę."
@@ -673,7 +673,7 @@ def seed_database(force: bool = False) -> None:
         ex_react_2 = Exercise(
             lesson_id=lesson_react_1_2.id,
             type=ExerciseType.code,
-            content="Embed the JavaScript variable 'title' inside an <h2> element using curly braces {}.",
+            content="Create a constant 'title' with the value \"My Application\", then a constant 'element' with an <h2> that shows title using curly braces {}.",
             translations={
                 "pl": {
                     "content": "Utwórz stałą 'title' o wartości \"My Application\", a następnie stałą 'element' z elementem <h2>, który wyświetla title za pomocą nawiasów klamrowych {}."
