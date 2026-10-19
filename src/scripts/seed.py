@@ -75,6 +75,7 @@ def seed_database(force: bool = False) -> None:
             ),
             icon_url="https://raw.githubusercontent.com/github/explore/main/topics/python/python.png",
             language="python",
+            xp_reward=150,
             translations={
                 "pl": {
                     "name": "Podstawy Pythona",
@@ -587,6 +588,7 @@ def seed_database(force: bool = False) -> None:
             ),
             icon_url="https://raw.githubusercontent.com/github/explore/main/topics/react/react.png",
             language="jsx",
+            xp_reward=150,
             translations={
                 "pl": {
                     "name": "React od podstaw",
