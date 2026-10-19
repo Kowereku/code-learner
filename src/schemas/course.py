@@ -25,6 +25,7 @@ class CourseListItem(Localized):
     name: str
     description: str | None = None
     icon_url: str | None = None
+    xp_reward: int = 0
     modules_count: int = 0
     lessons_count: int = 0
 
@@ -38,6 +39,7 @@ class CourseListItem(Localized):
                 "name": course.name,
                 "description": course.description,
                 "icon_url": course.icon_url,
+                "xp_reward": course.xp_reward,
                 "modules_count": len(course.modules),
                 "lessons_count": sum(len(module.lessons) for module in course.modules),
                 "translations": course.translations,
@@ -52,6 +54,7 @@ class CourseDetail(Localized):
     description: str | None = None
     icon_url: str | None = None
     language: str
+    xp_reward: int = 0
     modules: list["ModuleDetailRead"] = []
 
     model_config = ConfigDict(from_attributes=True)

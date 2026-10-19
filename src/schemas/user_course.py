@@ -24,6 +24,8 @@ class UserCourseRead(BaseModel):
     course_id: int
     enrolled_at: datetime
     is_active: bool
+    completed: bool = False
+    completed_at: datetime | None = None
     course: CourseListItem | None = None
 
     model_config = ConfigDict(from_attributes=True)
