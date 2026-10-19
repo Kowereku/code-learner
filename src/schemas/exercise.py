@@ -1,6 +1,9 @@
-from pydantic import BaseModel, ConfigDict
+from typing import Literal
+
+from pydantic import BaseModel, ConfigDict, Field
 
 from src.model.exercise import ExerciseType
+from src.schemas.localized import Localized
 
 
 class ExerciseBase(BaseModel):
@@ -17,7 +20,7 @@ class ExerciseCreate(BaseModel):
     correct_answer: str
 
 
-class ExerciseRead(BaseModel):
+class ExerciseRead(Localized):
     id: int
     lesson_id: int
     type: ExerciseType
@@ -27,3 +30,26 @@ class ExerciseRead(BaseModel):
     options: list[str] | list[list[str]] | None = None
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class ChatMessage(BaseModel):
+    role: Literal["assistant", "user"]
+    content: str = Field(min_length=1, max_length=1000)
+
+
+class ExerciseChat(BaseModel):
+    messages: list[ChatMessage] = Field(min_length=1, max_length=20)
+    locale: str = Field(min_length=2, max_length=10)
+
+
+class ExerciseCheck(BaseModel):
+    answer: str = Field(min_length=1, max_length=5000)
+
+
+class ExerciseChatRead(BaseModel):
+    passed: bool
+    reply: str = Field(min_length=1, max_length=1000)
+
+
+class ExerciseCheckRead(BaseModel):
+    passed: bool

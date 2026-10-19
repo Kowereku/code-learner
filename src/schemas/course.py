@@ -3,6 +3,7 @@ from typing import Self
 from pydantic import BaseModel, ConfigDict
 
 from src.model.course import Course
+from src.schemas.localized import Localized
 from src.schemas.module import ModuleDetailRead
 
 
@@ -19,7 +20,7 @@ class CourseCreate(BaseModel):
     language: str
 
 
-class CourseListItem(BaseModel):
+class CourseListItem(Localized):
     id: int
     name: str
     description: str | None = None
@@ -30,18 +31,22 @@ class CourseListItem(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     @classmethod
-    def from_course(cls, course: Course) -> Self:
-        return cls(
-            id=course.id,
-            name=course.name,
-            description=course.description,
-            icon_url=course.icon_url,
-            modules_count=len(course.modules),
-            lessons_count=sum(len(module.lessons) for module in course.modules),
+    def from_course(cls, course: Course, locale: str) -> Self:
+        return cls.model_validate(
+            {
+                "id": course.id,
+                "name": course.name,
+                "description": course.description,
+                "icon_url": course.icon_url,
+                "modules_count": len(course.modules),
+                "lessons_count": sum(len(module.lessons) for module in course.modules),
+                "translations": course.translations,
+            },
+            context={"locale": locale},
         )
 
 
-class CourseDetail(BaseModel):
+class CourseDetail(Localized):
     id: int
     name: str
     description: str | None = None

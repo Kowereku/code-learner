@@ -1,4 +1,4 @@
-.PHONY: install run-dev run migrate seed up down build logs db-up db-down hooks
+.PHONY: install run-dev run migrate seed up down build logs db-up db-down hooks ai-up ai-pull
 
 install:
 	uv sync
@@ -35,3 +35,10 @@ db-down:
 
 hooks:
 	git config core.hooksPath .githooks
+
+ai-up:
+	docker compose up -d ollama
+
+ai-pull:
+	docker compose exec ollama ollama pull qwen2.5-coder:7b
+	docker compose exec ollama ollama pull gemma3:4b

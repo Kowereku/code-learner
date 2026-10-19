@@ -1,6 +1,7 @@
 from pydantic import BaseModel, ConfigDict
 
 from src.schemas.lesson import LessonRead
+from src.schemas.localized import Localized
 
 
 class ModuleBase(BaseModel):
@@ -22,7 +23,7 @@ class ModuleRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class ModuleDetailRead(BaseModel):
+class ModuleDetailRead(Localized):
     id: int
     course_id: int
     title: str

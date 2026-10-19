@@ -13,6 +13,7 @@ class ExerciseType(str, enum.Enum):
     true_false = "true_false"
     block_assembly = "block_assembly"
     matching = "matching"
+    chat = "chat"
 
 
 class Exercise(Base):
@@ -27,4 +28,5 @@ class Exercise(Base):
     code_snippet: Mapped[str | None] = mapped_column(Text, nullable=True)
     correct_answer: Mapped[str] = mapped_column(Text, nullable=False)
     options: Mapped[list | None] = mapped_column(JSON, nullable=True)
+    translations: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     lesson: Mapped["Lesson"] = relationship(back_populates="exercises")
