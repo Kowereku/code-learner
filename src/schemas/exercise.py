@@ -1,4 +1,6 @@
-from pydantic import BaseModel, ConfigDict
+from typing import Literal
+
+from pydantic import BaseModel, ConfigDict, Field
 
 from src.model.exercise import ExerciseType
 
@@ -27,3 +29,17 @@ class ExerciseRead(BaseModel):
     options: list[str] | list[list[str]] | None = None
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class ChatMessage(BaseModel):
+    role: Literal["assistant", "user"]
+    content: str = Field(min_length=1, max_length=1000)
+
+
+class ExerciseChat(BaseModel):
+    messages: list[ChatMessage] = Field(min_length=1, max_length=20)
+
+
+class ExerciseChatRead(BaseModel):
+    passed: bool
+    reply: str = Field(min_length=1, max_length=1000)
