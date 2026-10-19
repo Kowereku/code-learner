@@ -12,6 +12,9 @@ class Course(Base):
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
     icon_url: Mapped[str | None] = mapped_column(String(255), nullable=True)
     language: Mapped[str] = mapped_column(String(50), nullable=False)
+    xp_reward: Mapped[int] = mapped_column(
+        BigInteger, nullable=False, default=0, server_default="0"
+    )
     translations: Mapped[dict | None] = mapped_column(JSON, nullable=True)
 
     modules: Mapped[list["Module"]] = relationship(
