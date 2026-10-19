@@ -55,3 +55,8 @@ class CourseDetail(Localized):
     modules: list["ModuleDetailRead"] = []
 
     model_config = ConfigDict(from_attributes=True)
+
+
+# Backward-compatibility aliases
+CourseRead = CourseListItem
+CourseTreeRead = CourseDetail

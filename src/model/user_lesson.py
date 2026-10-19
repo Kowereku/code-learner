@@ -1,6 +1,7 @@
 from datetime import datetime
+from typing import Any
 
-from sqlalchemy import BigInteger, DateTime, ForeignKey
+from sqlalchemy import BigInteger, DateTime, ForeignKey, JSON, String, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.model.db import Base
@@ -19,11 +20,31 @@ class UserLesson(Base):
         ForeignKey("lessons.id", ondelete="CASCADE"),
         primary_key=True,
     )
+    status: Mapped[str] = mapped_column(
+        String(50),
+        nullable=False,
+        default="in_progress",
+        server_default="in_progress",
+    )
+    last_position: Mapped[Any | None] = mapped_column(
+        JSON,
+        nullable=True,
+    )
     completed_at: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=True), nullable=True
+        DateTime(timezone=True),
+        nullable=True,
     )
     mistakes_made: Mapped[int] = mapped_column(
-        BigInteger, nullable=False, default=0, server_default="0"
+        BigInteger,
+        nullable=False,
+        default=0,
+        server_default="0",
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
     )
 
     user: Mapped["User"] = relationship(back_populates="lesson_links")
