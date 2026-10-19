@@ -2,7 +2,7 @@ import httpx
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from src.api.deps import get_current_user
+from src.api.deps import get_current_user, get_locale
 from src.core import ai
 from src.crud import exercise as exercise_crud
 from src.model.db import get_db
@@ -21,7 +21,9 @@ Respond only with JSON: {{"passed": true or false, "reply": "..."}}"""
 
 
 @router.get("/{exercise_id}", response_model=ExerciseRead)
-def get_exercise(exercise_id: int, db: Session = Depends(get_db)):
+def get_exercise(
+    exercise_id: int, db: Session = Depends(get_db), locale: str = Depends(get_locale)
+) -> ExerciseRead:
     """Retrieve exercise details by ID, including starter code_snippet for Dual Mode."""
     exercise = exercise_crud.get_exercise_by_id(db, exercise_id)
     if not exercise:
@@ -29,7 +31,7 @@ def get_exercise(exercise_id: int, db: Session = Depends(get_db)):
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Exercise with ID {exercise_id} not found.",
         )
-    return exercise
+    return ExerciseRead.model_validate(exercise, context={"locale": locale})
 
 
 @router.post(

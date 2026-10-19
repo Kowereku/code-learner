@@ -3,6 +3,7 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field
 
 from src.model.exercise import ExerciseType
+from src.schemas.localized import Localized
 
 
 class ExerciseBase(BaseModel):
@@ -19,7 +20,7 @@ class ExerciseCreate(BaseModel):
     correct_answer: str
 
 
-class ExerciseRead(BaseModel):
+class ExerciseRead(Localized):
     id: int
     lesson_id: int
     type: ExerciseType

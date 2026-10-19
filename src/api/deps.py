@@ -1,4 +1,4 @@
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, Header, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 import jwt
 from sqlalchemy.orm import Session
@@ -34,3 +34,8 @@ def get_current_user(
     if user is None:
         raise credentials_exception
     return user
+
+
+def get_locale(accept_language: str = Header(default="en")) -> str:
+    """Return the two-letter language code the client asked for."""
+    return accept_language[:2].lower()

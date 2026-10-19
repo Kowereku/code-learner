@@ -1,6 +1,7 @@
 from pydantic import BaseModel, ConfigDict, Field
 
 from src.schemas.exercise import ExerciseRead
+from src.schemas.localized import Localized
 
 
 class LessonBase(BaseModel):
@@ -13,7 +14,7 @@ class LessonCreate(BaseModel):
     xp_reward: int = 0
 
 
-class LessonRead(BaseModel):
+class LessonRead(Localized):
     id: int
     module_id: int
     title: str
@@ -23,7 +24,7 @@ class LessonRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class LessonDetailRead(BaseModel):
+class LessonDetailRead(Localized):
     id: int
     module_id: int
     title: str

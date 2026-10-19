@@ -1,4 +1,4 @@
-from sqlalchemy import BigInteger, Boolean, ForeignKey, String
+from sqlalchemy import JSON, BigInteger, Boolean, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.model.db import Base
@@ -18,6 +18,7 @@ class Lesson(Base):
     is_quiz: Mapped[bool] = mapped_column(
         Boolean, nullable=False, default=False, server_default="false"
     )
+    translations: Mapped[dict | None] = mapped_column(JSON, nullable=True)
 
     module: Mapped["Module"] = relationship(back_populates="lessons")
     exercises: Mapped[list["Exercise"]] = relationship(

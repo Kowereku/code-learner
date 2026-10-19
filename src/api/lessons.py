@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from src.api.deps import get_current_user
+from src.api.deps import get_current_user, get_locale
 from src.crud import lesson as lesson_crud
 from src.crud import progress as progress_crud
 from src.model.db import get_db
@@ -13,7 +13,9 @@ router = APIRouter()
 
 
 @router.get("/{lesson_id}", response_model=LessonDetailRead)
-def get_lesson(lesson_id: int, db: Session = Depends(get_db)):
+def get_lesson(
+    lesson_id: int, db: Session = Depends(get_db), locale: str = Depends(get_locale)
+) -> LessonDetailRead:
     """Retrieve lesson details including its list of exercises for the learning view."""
     lesson = lesson_crud.get_lesson_by_id(db, lesson_id)
     if not lesson:
@@ -21,7 +23,7 @@ def get_lesson(lesson_id: int, db: Session = Depends(get_db)):
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Lesson with ID {lesson_id} not found.",
         )
-    return lesson
+    return LessonDetailRead.model_validate(lesson, context={"locale": locale})
 
 
 @router.post("/{lesson_id}/complete", response_model=UserRead)

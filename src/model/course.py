@@ -1,4 +1,4 @@
-from sqlalchemy import BigInteger, String, Text
+from sqlalchemy import JSON, BigInteger, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.model.db import Base
@@ -12,6 +12,7 @@ class Course(Base):
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
     icon_url: Mapped[str | None] = mapped_column(String(255), nullable=True)
     language: Mapped[str] = mapped_column(String(50), nullable=False)
+    translations: Mapped[dict | None] = mapped_column(JSON, nullable=True)
 
     modules: Mapped[list["Module"]] = relationship(
         back_populates="course",
