@@ -2,6 +2,8 @@ from datetime import datetime, timezone
 
 from sqlalchemy.orm import Session, selectinload
 
+from src.core.streak import next_streak
+from src.crud.badge import sync_badges
 from src.model.course import Course
 from src.model.lesson import Lesson
 from src.model.module import Module
@@ -116,15 +118,25 @@ def complete_lesson(
     user: User,
     lesson: Lesson,
     mistakes_made: int,
+    code_answers: int = 0,
 ) -> LessonCompleteResponse:
     """Mark a lesson completed, award XP on first completion, and check
     whether the entire course has been finished.
+
+    Every completion, replays included, counts towards the daily streak and
+    adds the correct typed code answers; badges reached by it are awarded.
 
     Returns a structured response with all reward details.
     """
     now = datetime.now(timezone.utc)
     is_first_completion = False
     xp_earned = 0
+
+    today = now.date()
+    user.streak_days = next_streak(user.last_activity_date, today, user.streak_days)
+    user.last_activity_date = today
+    user.best_streak = max(user.best_streak, user.streak_days)
+    user.code_answers += code_answers
 
     # Upsert UserLesson row
     user_lesson = db.get(UserLesson, (user.id, lesson.id))
@@ -156,6 +168,8 @@ def complete_lesson(
         if course_completion and course_completion.bonus_xp > 0:
             xp_earned += course_completion.bonus_xp
 
+    new_badges = sync_badges(db, user)
+
     db.commit()
     db.refresh(user)
 
@@ -168,4 +182,6 @@ def complete_lesson(
         mistakes_made=user_lesson.mistakes_made,
         completed_at=user_lesson.completed_at,
         course_completed=course_completion,
+        streak_days=user.streak_days,
+        new_badges=new_badges,
     )

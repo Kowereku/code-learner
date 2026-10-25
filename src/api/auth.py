@@ -48,6 +48,11 @@ def login(login_data: LoginData, db: Session = Depends(get_db)):
 
 
 @router.get("/me", response_model=UserRead)
-def get_current_user_profile(current_user: User = Depends(get_current_user)):
-    """Retrieve profile of the currently authenticated user (JWT protected)."""
-    return current_user
+def get_current_user_profile(
+    current_user: User = Depends(get_current_user), db: Session = Depends(get_db)
+):
+    """Retrieve profile of the currently authenticated user (JWT protected).
+
+    A streak broken by a skipped day is reset first, so the header never shows a stale one.
+    """
+    return user_crud.refresh_streak(db, current_user)

@@ -47,5 +47,5 @@ def complete_lesson(
             detail=f"Lesson with ID {lesson_id} not found.",
         )
     return progress_crud.complete_lesson(
-        db, current_user, lesson, lesson_in.mistakes_made
+        db, current_user, lesson, lesson_in.mistakes_made, lesson_in.code_answers
     )

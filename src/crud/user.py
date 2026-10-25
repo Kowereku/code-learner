@@ -1,6 +1,9 @@
+from datetime import datetime, timezone
+
 from sqlalchemy.orm import Session
 
 from src.core.security import hash_password
+from src.core.streak import displayed_streak
 from src.model.course import Track
 from src.model.user import User
 from src.schemas.user import UserCreate
@@ -42,6 +45,17 @@ def create_user(db: Session, user_in: UserCreate) -> User:
     db.add(user)
     db.commit()
     db.refresh(user)
+    return user
+
+
+def refresh_streak(db: Session, user: User) -> User:
+    """Reset a streak that broke because a whole day was skipped, so it reads as 0."""
+    today = datetime.now(timezone.utc).date()
+    streak = displayed_streak(user.last_activity_date, today, user.streak_days)
+    if streak != user.streak_days:
+        user.streak_days = streak
+        db.commit()
+        db.refresh(user)
     return user
 
 

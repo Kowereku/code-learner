@@ -1,6 +1,6 @@
-from datetime import datetime
+from datetime import date, datetime
 
-from sqlalchemy import BigInteger, Boolean, DateTime, String, func
+from sqlalchemy import BigInteger, Boolean, Date, DateTime, String, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.model.db import Base
@@ -18,6 +18,13 @@ class User(Base):
     streak_days: Mapped[int] = mapped_column(
         BigInteger, nullable=False, default=0, server_default="0"
     )
+    best_streak: Mapped[int] = mapped_column(
+        BigInteger, nullable=False, default=0, server_default="0"
+    )
+    last_activity_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+    code_answers: Mapped[int] = mapped_column(
+        BigInteger, nullable=False, default=0, server_default="0"
+    )
     track: Mapped[str | None] = mapped_column(String(50), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
@@ -31,5 +38,8 @@ class User(Base):
         back_populates="user", cascade="all, delete-orphan"
     )
     lesson_links: Mapped[list["UserLesson"]] = relationship(
+        back_populates="user", cascade="all, delete-orphan"
+    )
+    badges: Mapped[list["UserBadge"]] = relationship(
         back_populates="user", cascade="all, delete-orphan"
     )

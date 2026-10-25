@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+from src.schemas.badge import BadgeRead
 from src.schemas.course import CourseListItem
 from src.schemas.user import UserRead
 
@@ -10,6 +11,7 @@ class ProfileStats(BaseModel):
     total_xp: int
     streak_days: int
     courses_completed: int
+    badges_earned: int = 0
 
 
 class NextLessonRead(BaseModel):
@@ -34,5 +36,7 @@ class ProfileRead(BaseModel):
 
     user: UserRead
     stats: ProfileStats
+    latest_badge: BadgeRead | None = None
+    next_badge: BadgeRead | None = None
     courses: list[ProfileCourse] = []
     suggested_course: CourseListItem | None = None

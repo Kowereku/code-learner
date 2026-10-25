@@ -37,3 +37,4 @@ class LessonDetailRead(Localized):
 
 class LessonComplete(BaseModel):
     mistakes_made: int = Field(default=0, ge=0)
+    code_answers: int = Field(default=0, ge=0)
