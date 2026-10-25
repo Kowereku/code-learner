@@ -1,7 +1,10 @@
-.PHONY: install run-dev run migrate seed up down build logs db-up db-down hooks ai-up ai-pull
+.PHONY: install run-dev run test migrate seed up down build logs db-up db-down hooks ai-up ai-pull
 
 install:
 	uv sync
+
+test:
+	uv run pytest -q
 
 run-dev:
 	uv run uvicorn src.main:app --reload
