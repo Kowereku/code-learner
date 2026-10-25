@@ -2,6 +2,8 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
+from src.schemas.badge import BadgeRead
+
 
 class CourseCompletionInfo(BaseModel):
     """Info about course completion triggered by finishing its last lesson."""
@@ -22,3 +24,5 @@ class LessonCompleteResponse(BaseModel):
     mistakes_made: int
     completed_at: datetime
     course_completed: CourseCompletionInfo | None = None
+    streak_days: int
+    new_badges: list[BadgeRead] = []

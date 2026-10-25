@@ -38,6 +38,7 @@ class UserRead(UserBase):
     id: int
     total_xp: int
     streak_days: int
+    best_streak: int = 0
     track: Track | None = None
     is_admin: bool
     created_at: datetime
