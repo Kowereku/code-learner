@@ -1,6 +1,7 @@
 from types import SimpleNamespace as NS
 
 from src.core.profile import next_lesson, suggest_course
+from src.crud.profile import _localized_title
 
 
 def course(cid, track, modules=()):
@@ -37,3 +38,14 @@ def test_suggest_falls_back_to_any_area():
 
 def test_suggest_none_when_all_started():
     assert suggest_course([course(1, "linux")], {1}, "linux") is None
+
+
+def test_suggest_without_area_takes_first_fresh_course():
+    # No area chosen: a course without an area must not be preferred.
+    cs = [course(1, "linux"), course(2, None)]
+    assert suggest_course(cs, set(), None).id == 1
+
+
+def test_localized_title_falls_back_on_empty_translation():
+    item = NS(title="Loops", translations={"pl": {"title": ""}})
+    assert _localized_title(item, "pl") == "Loops"

@@ -16,4 +16,5 @@ def next_lesson(course, completed_ids: set[int]):
 def suggest_course(courses, started_ids: set[int], track: str | None):
     """Return the first not-started course from the user's area, else any not-started course."""
     fresh = [course for course in courses if course.id not in started_ids]
-    return next((course for course in fresh if course.track == track), None) or next(iter(fresh), None)
+    in_area = (course for course in fresh if track and course.track == track)
+    return next(in_area, None) or next(iter(fresh), None)

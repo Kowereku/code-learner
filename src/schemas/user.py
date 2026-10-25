@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
-from src.model.course import Track
+from src.model.track import Track
 
 
 class UserBase(BaseModel):

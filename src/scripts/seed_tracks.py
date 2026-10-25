@@ -8,7 +8,8 @@ adds whichever of these courses are still missing.
 
 from sqlalchemy.orm import Session
 
-from src.model.course import Course, Track
+from src.model.course import Course
+from src.model.track import Track
 from src.model.exercise import Exercise, ExerciseType
 from src.model.lesson import Lesson
 from src.model.module import Module

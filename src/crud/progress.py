@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session, selectinload
 from src.core.streak import next_streak
 from src.crud.badge import sync_badges
 from src.model.course import Course
+from src.model.exercise import ExerciseType
 from src.model.lesson import Lesson
 from src.model.module import Module
 from src.model.user import User
@@ -136,7 +137,9 @@ def complete_lesson(
     user.streak_days = next_streak(user.last_activity_date, today, user.streak_days)
     user.last_activity_date = today
     user.best_streak = max(user.best_streak, user.streak_days)
-    user.code_answers += code_answers
+    # A run can't have more correct typed answers than the lesson has code exercises.
+    code_exercises = sum(1 for exercise in lesson.exercises if exercise.type == ExerciseType.code)
+    user.code_answers += min(code_answers, code_exercises)
 
     # Upsert UserLesson row
     user_lesson = db.get(UserLesson, (user.id, lesson.id))
