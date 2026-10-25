@@ -2,7 +2,7 @@ from typing import Self
 
 from pydantic import BaseModel, ConfigDict
 
-from src.model.course import Course
+from src.model.course import Course, Track
 from src.schemas.localized import Localized
 from src.schemas.module import ModuleDetailRead
 
@@ -25,6 +25,7 @@ class CourseListItem(Localized):
     name: str
     description: str | None = None
     icon_url: str | None = None
+    track: Track | None = None
     xp_reward: int = 0
     modules_count: int = 0
     lessons_count: int = 0
@@ -39,6 +40,7 @@ class CourseListItem(Localized):
                 "name": course.name,
                 "description": course.description,
                 "icon_url": course.icon_url,
+                "track": course.track,
                 "xp_reward": course.xp_reward,
                 "modules_count": len(course.modules),
                 "lessons_count": sum(len(module.lessons) for module in course.modules),

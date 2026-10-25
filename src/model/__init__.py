@@ -5,7 +5,7 @@ Alembic autogenerate can detect the full schema.
 """
 
 from src.model.db import Base
-from src.model.course import Course
+from src.model.course import Course, Track
 from src.model.exercise import Exercise, ExerciseType
 from src.model.lesson import Lesson
 from src.model.module import Module
@@ -20,6 +20,7 @@ __all__ = [
     "ExerciseType",
     "Lesson",
     "Module",
+    "Track",
     "User",
     "UserCourse",
     "UserLesson",

@@ -2,12 +2,28 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from src.api.deps import get_current_user
+from src.crud import user as user_crud
 from src.crud import user_course as user_course_crud
 from src.model.db import get_db
 from src.model.user import User
+from src.schemas.user import UserRead, UserTrackUpdate
 from src.schemas.user_course import UserCourseCreate, UserCourseRead
 
 router = APIRouter()
+
+
+@router.put(
+    "/me/track",
+    response_model=UserRead,
+    summary="Save the learning area of the current user",
+)
+def update_current_user_track(
+    track_data: UserTrackUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Save the area picked on the Choice page; courses from it are recommended."""
+    return user_crud.update_user_track(db, current_user, track_data.track)
 
 
 @router.post(
