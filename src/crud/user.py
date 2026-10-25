@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from src.core.security import hash_password
 from src.core.streak import displayed_streak
-from src.model.course import Track
+from src.model.track import Track
 from src.model.user import User
 from src.schemas.user import UserCreate
 

@@ -14,8 +14,8 @@ from src.schemas.user import UserRead
 
 
 def _localized_title(item, locale: str) -> str:
-    """Return the title in the requested language, falling back to the base one."""
-    return ((item.translations or {}).get(locale) or {}).get("title", item.title)
+    """Return the title in the requested language, falling back to the base one when missing or empty."""
+    return ((item.translations or {}).get(locale) or {}).get("title") or item.title
 
 
 def _refresh(db: Session, user: User) -> None:
@@ -33,11 +33,11 @@ def get_badges(db: Session, user: User) -> list[BadgeRead]:
 
 def get_profile(db: Session, user: User, locale: str) -> ProfileRead:
     """Build the profile: stats, badges, started courses (in progress first) and a suggested course."""
-    badges = get_badges(db, user)
+    _refresh(db, user)
+    metrics = badge_crud.get_metrics(db, user)
+    badges = badge_crud.list_badges(db, user, metrics)
     earned = [badge for badge in badges if badge.awarded_at]
-    upcoming_badge = closest_next(
-        badge_crud.get_metrics(db, user), {badge.code for badge in earned}
-    )
+    upcoming_badge = closest_next(metrics, {badge.code for badge in earned})
 
     courses = sorted(course_crud.get_courses(db), key=lambda course: course.id)
     completed_ids = {

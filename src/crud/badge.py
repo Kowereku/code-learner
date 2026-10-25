@@ -1,25 +1,43 @@
 from datetime import datetime, timezone
 
-from sqlalchemy import func
+from sqlalchemy import func, select
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
 from src.core.badges import BADGES, BadgeDef, Metrics, earned_codes, progress
 from src.model.lesson import Lesson
+from src.model.module import Module
 from src.model.user import User
 from src.model.user_badge import UserBadge
-from src.model.user_course import UserCourse
 from src.model.user_lesson import UserLesson
 from src.schemas.badge import BadgeRead
 
 
+def _courses_completed(db: Session, user_id: int) -> int:
+    """Count courses whose every lesson the user has completed.
+
+    Counted from lessons, like the profile does, so the stat and the course badges agree
+    even for courses finished before courses were marked completed automatically.
+    """
+    finished = (
+        select(Module.course_id)
+        .join(Lesson, Lesson.module_id == Module.id)
+        .outerjoin(
+            UserLesson,
+            (UserLesson.lesson_id == Lesson.id)
+            & (UserLesson.user_id == user_id)
+            & UserLesson.completed_at.isnot(None),
+        )
+        .group_by(Module.course_id)
+        .having(func.count(Lesson.id) == func.count(UserLesson.lesson_id))
+        .subquery()
+    )
+    return db.scalar(select(func.count()).select_from(finished))
+
+
 def get_metrics(db: Session, user: User) -> Metrics:
     """Compute the numbers the badges are measured on for one user."""
-    courses_completed = (
-        db.query(func.count())
-        .select_from(UserCourse)
-        .filter(UserCourse.user_id == user.id, UserCourse.completed.is_(True))
-        .scalar()
-    )
+    courses_completed = _courses_completed(db, user.id)
     flawless_by_quiz = dict(
         db.query(Lesson.is_quiz, func.count())
         .join(UserLesson, UserLesson.lesson_id == Lesson.id)
@@ -57,10 +75,28 @@ def _read(badge: BadgeDef, metrics: Metrics, awarded_at: datetime | None) -> Bad
     )
 
 
+def award_badges(db: Session, user_id: int, codes: list[str], awarded_at: datetime) -> list[str]:
+    """Insert the badges, skipping any the user already has, and return the codes actually added.
+
+    ON CONFLICT DO NOTHING keeps two racing requests (e.g. a completion and a profile read in
+    another tab) from failing on the primary key.
+    """
+    if not codes:
+        return []
+    statement = (
+        insert(UserBadge)
+        .values([{"user_id": user_id, "badge_code": code, "awarded_at": awarded_at} for code in codes])
+        .on_conflict_do_nothing()
+        .returning(UserBadge.badge_code)
+    )
+    inserted = set(db.scalars(statement))
+    return [code for code in codes if code in inserted]
+
+
 def sync_badges(db: Session, user: User) -> list[BadgeRead]:
     """Award every badge the user qualifies for but doesn't have yet.
 
-    Flushes but doesn't commit, so it can run inside the lesson-completion transaction.
+    Doesn't commit, so it can run inside the lesson-completion transaction.
     Returns only the newly awarded badges.
     """
     # The app's sessions don't autoflush, so pending progress must be visible to the metric queries.
@@ -69,17 +105,16 @@ def sync_badges(db: Session, user: User) -> list[BadgeRead]:
     have = _awarded_at(db, user)
     reached = earned_codes(metrics)
     now = datetime.now(timezone.utc)
-    new_badges = []
-    for badge in BADGES:
-        if badge.code in reached and badge.code not in have:
-            db.add(UserBadge(user_id=user.id, badge_code=badge.code, awarded_at=now))
-            new_badges.append(_read(badge, metrics, now))
-    db.flush()
-    return new_badges
+    missing = [badge.code for badge in BADGES if badge.code in reached and badge.code not in have]
+    added = set(award_badges(db, user.id, missing, now))
+    return [_read(badge, metrics, now) for badge in BADGES if badge.code in added]
 
 
-def list_badges(db: Session, user: User) -> list[BadgeRead]:
-    """Return all badges in definition order with the user's progress and award dates."""
-    metrics = get_metrics(db, user)
+def list_badges(db: Session, user: User, metrics: Metrics | None = None) -> list[BadgeRead]:
+    """Return all badges in definition order with the user's progress and award dates.
+
+    Pass metrics when the caller already computed them, to skip recomputing.
+    """
+    metrics = metrics or get_metrics(db, user)
     awarded = _awarded_at(db, user)
     return [_read(badge, metrics, awarded.get(badge.code)) for badge in BADGES]

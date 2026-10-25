@@ -1,17 +1,7 @@
-import enum
-
 from sqlalchemy import JSON, BigInteger, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.model.db import Base
-
-
-class Track(str, enum.Enum):
-    """Learning area a user picks after registering; courses are preset per area."""
-
-    data_science = "data_science"
-    linux = "linux"
-    backend = "backend"
 
 
 class Course(Base):

@@ -2,7 +2,8 @@ from typing import Self
 
 from pydantic import BaseModel, ConfigDict
 
-from src.model.course import Course, Track
+from src.model.course import Course
+from src.model.track import Track
 from src.schemas.localized import Localized
 from src.schemas.module import ModuleDetailRead
 
