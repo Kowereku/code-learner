@@ -1,7 +1,17 @@
+import enum
+
 from sqlalchemy import JSON, BigInteger, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.model.db import Base
+
+
+class Track(str, enum.Enum):
+    """Learning area a user picks after registering; courses are preset per area."""
+
+    data_science = "data_science"
+    linux = "linux"
+    backend = "backend"
 
 
 class Course(Base):
@@ -12,6 +22,7 @@ class Course(Base):
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
     icon_url: Mapped[str | None] = mapped_column(String(255), nullable=True)
     language: Mapped[str] = mapped_column(String(50), nullable=False)
+    track: Mapped[str | None] = mapped_column(String(50), nullable=True)
     xp_reward: Mapped[int] = mapped_column(
         BigInteger, nullable=False, default=0, server_default="0"
     )

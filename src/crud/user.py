@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 
 from src.core.security import hash_password
+from src.model.course import Track
 from src.model.user import User
 from src.schemas.user import UserCreate
 
@@ -39,6 +40,14 @@ def create_user(db: Session, user_in: UserCreate) -> User:
         password=hash_password(user_in.password),
     )
     db.add(user)
+    db.commit()
+    db.refresh(user)
+    return user
+
+
+def update_user_track(db: Session, user: User, track: Track) -> User:
+    """Save the learning area the user chose on the Choice page."""
+    user.track = track.value
     db.commit()
     db.refresh(user)
     return user

@@ -9,11 +9,12 @@ or
 
 import sys
 
-from src.model.course import Course
+from src.model.course import Course, Track
 from src.model.db import SessionLocal
 from src.model.exercise import Exercise, ExerciseType
 from src.model.lesson import Lesson
 from src.model.module import Module
+from src.scripts.seed_tracks import seed_track_courses
 
 
 def seed_database(force: bool = False) -> None:
@@ -30,6 +31,7 @@ def seed_database(force: bool = False) -> None:
                 f"Courses already exist in database ({existing_names}). Skipping seed. "
                 "Use --force to overwrite."
             )
+            seed_track_courses(db)
             return
 
         if force:
@@ -75,6 +77,7 @@ def seed_database(force: bool = False) -> None:
             ),
             icon_url="https://raw.githubusercontent.com/github/explore/main/topics/python/python.png",
             language="python",
+            track=Track.data_science,
             xp_reward=150,
             translations={
                 "pl": {
@@ -1158,6 +1161,7 @@ def seed_database(force: bool = False) -> None:
             f"Database successfully seeded! Created courses 'Python Basics' (ID: {course_python.id}) "
             f"and 'React Fundamentals' (ID: {course_react.id}) with complete module, lesson, and exercise hierarchies."
         )
+        seed_track_courses(db, force=force)
     except Exception as e:
         db.rollback()
         print(f"Error occurred while seeding the database: {e}")

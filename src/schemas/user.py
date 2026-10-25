@@ -2,6 +2,8 @@ from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
+from src.model.course import Track
+
 
 class UserBase(BaseModel):
     """Base user schema containing public attributes."""
@@ -36,7 +38,14 @@ class UserRead(UserBase):
     id: int
     total_xp: int
     streak_days: int
+    track: Track | None = None
     is_admin: bool
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class UserTrackUpdate(BaseModel):
+    """Payload for saving the learning area chosen on the Choice page."""
+
+    track: Track
