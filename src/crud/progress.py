@@ -2,8 +2,10 @@ from datetime import date, datetime, timezone
 
 from sqlalchemy.orm import Session, selectinload
 
+from src.core.levels import level_for_xp
 from src.core.streak import next_streak
 from src.crud.badge import record_code_solutions, sync_badges
+from src.crud.leaderboard import rank_of
 from src.model.course import Course
 from src.model.lesson import Lesson
 from src.model.module import Module
@@ -133,6 +135,7 @@ def complete_lesson(
     now = datetime.now(timezone.utc)
     is_first_completion = False
     xp_earned = 0
+    level_before = level_for_xp(user.total_xp)
 
     user.streak_days = next_streak(user.last_activity_date, today, user.streak_days)
     user.last_activity_date = today
@@ -170,6 +173,9 @@ def complete_lesson(
             xp_earned += course_completion.bonus_xp
 
     new_badges = sync_badges(db, user, today)
+    # Ranked inside the transaction: if this query failed, the completion would roll back
+    # instead of being saved with its badges and level-up never reaching the learner.
+    rank = rank_of(db, user.total_xp)
 
     db.commit()
     db.refresh(user)
@@ -185,4 +191,7 @@ def complete_lesson(
         course_completed=course_completion,
         streak_days=user.streak_days,
         new_badges=new_badges,
+        level_before=level_before,
+        level_after=level_for_xp(user.total_xp),
+        rank=rank,
     )
