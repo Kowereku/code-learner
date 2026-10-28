@@ -7,7 +7,7 @@ def by_code(code):
     return next(b for b in BADGES if b.code == code)
 
 
-def test_twelve_badges_in_order():
+def test_badges_in_order():
     assert [b.code for b in BADGES] == [
         "courses_1",
         "courses_5",
@@ -21,7 +21,15 @@ def test_twelve_badges_in_order():
         "own_code_10",
         "own_code_50",
         "own_code_100",
+        "level_3",
+        "level_5",
+        "level_10",
     ]
+
+
+def test_level_badge_uses_level_metric():
+    reached = earned_codes(Metrics(0, 0, 0, 0, 0, level=5))
+    assert {"level_3", "level_5"} <= reached and "level_10" not in reached
 
 
 def test_progress_is_capped_at_goal():
@@ -57,5 +65,16 @@ def test_closest_next_tie_prefers_smaller_goal():
 
 
 def test_closest_next_none_when_all_earned():
-    m = Metrics(10, 30, 1, 1, 100)
+    m = Metrics(10, 30, 1, 1, 100, level=10)
     assert closest_next(m, earned_codes(m)) is None
+
+
+def test_fresh_user_has_no_level_badge_progress():
+    # Level 1 is where everyone starts, so it doesn't count towards "Level 3".
+    fresh = Metrics(0, 0, 0, 0, 0, level=1)
+    assert progress(by_code("level_3"), fresh) == 0
+    assert closest_next(fresh, set()).code == "courses_1"
+
+
+def test_level_badge_progress_counts_levels_from_two():
+    assert progress(by_code("level_3"), Metrics(0, 0, 0, 0, 0, level=2)) == 2

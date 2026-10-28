@@ -26,7 +26,8 @@ def make_user(db):
     """Create a throwaway user inside the rolled-back session."""
 
     def make(**fields) -> User:
-        user = User(username="probe", email="probe@example.com", password="x", **fields)
+        defaults = dict(username="probe", email="probe@example.com", password="x")
+        user = User(**(defaults | fields))
         db.add(user)
         db.flush()
         return user

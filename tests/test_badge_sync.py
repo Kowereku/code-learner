@@ -1,6 +1,7 @@
 from datetime import date, datetime, timezone
 
 from src.crud.badge import award_badges, get_metrics, sync_badges
+from src.crud.leaderboard import rank_of
 from src.crud.progress import complete_lesson
 from src.model.course import Course
 from src.model.exercise import Exercise, ExerciseType
@@ -54,3 +55,29 @@ def test_courses_completed_counts_courses_with_every_lesson_done(db, make_user):
     )
     db.flush()
     assert get_metrics(db, user, TODAY).courses_completed == 1
+
+
+def _first_lesson(db) -> Lesson:
+    """The first lesson of the first course: not a quiz, and finishing it doesn't finish the course."""
+    course = db.query(Course).order_by(Course.id).first()
+    module = min(course.modules, key=lambda m: m.order_index)
+    lesson = min(module.lessons, key=lambda lesson: lesson.id)
+    # The level tests below rely on this: fail clearly if the seed data ever changes.
+    assert not lesson.is_quiz and lesson.xp_reward >= 5
+    return lesson
+
+
+def test_crossing_a_level_reports_it(db, make_user):
+    user = make_user(total_xp=295)
+    result = complete_lesson(db, user, _first_lesson(db), 0, TODAY)
+    assert (result.level_before, result.level_after) == (2, 3)
+    assert result.rank == rank_of(db, result.total_xp)
+    assert "level_3" in [b.code for b in result.new_badges]
+
+
+def test_replay_keeps_level(db, make_user):
+    user = make_user(total_xp=295)
+    lesson = _first_lesson(db)
+    complete_lesson(db, user, lesson, 0, TODAY)
+    replay = complete_lesson(db, user, lesson, 0, TODAY)
+    assert replay.level_before == replay.level_after == 3

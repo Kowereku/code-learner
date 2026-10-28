@@ -12,8 +12,9 @@ class User(Base):
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     username: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
     email: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
+    # Indexed for the ranking: counting users with more XP and ordering everyone by XP.
     total_xp: Mapped[int] = mapped_column(
-        BigInteger, nullable=False, default=0, server_default="0"
+        BigInteger, nullable=False, default=0, server_default="0", index=True
     )
     streak_days: Mapped[int] = mapped_column(
         BigInteger, nullable=False, default=0, server_default="0"

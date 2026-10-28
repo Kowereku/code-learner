@@ -5,6 +5,7 @@ from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
 from src.core.badges import BADGES, BadgeDef, Metrics, earned_codes, progress
+from src.core.levels import level_for_xp
 from src.core.streak import displayed_streak
 from src.model.lesson import Lesson
 from src.model.module import Module
@@ -61,6 +62,7 @@ def get_metrics(db: Session, user: User, today: date) -> Metrics:
         perfect_quizzes=flawless_by_quiz.get(True, 0),
         code_answers=code_answers,
         current_streak=displayed_streak(user.last_activity_date, today, user.streak_days),
+        level=level_for_xp(user.total_xp),
     )
 
 

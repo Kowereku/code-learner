@@ -26,3 +26,7 @@ class LessonCompleteResponse(BaseModel):
     course_completed: CourseCompletionInfo | None = None
     streak_days: int
     new_badges: list[BadgeRead] = []
+    # The frontend shows the level-up popup when level_after > level_before.
+    level_before: int
+    level_after: int
+    rank: int | None = None

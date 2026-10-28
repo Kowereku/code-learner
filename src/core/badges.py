@@ -17,6 +17,12 @@ class Metrics:
     perfect_quizzes: int
     code_answers: int
     current_streak: int = 0
+    level: int = 0
+
+    @property
+    def level_progress(self) -> int:
+        """Progress towards level badges: level 1 is where everyone starts, so it counts as 0."""
+        return self.level if self.level > 1 else 0
 
 
 @dataclass(frozen=True)
@@ -48,6 +54,9 @@ BADGES: list[BadgeDef] = [
     BadgeDef("own_code_10", "own_code", 10, "code_answers"),
     BadgeDef("own_code_50", "own_code", 50, "code_answers"),
     BadgeDef("own_code_100", "own_code", 100, "code_answers"),
+    BadgeDef("level_3", "level", 3, "level", "level_progress"),
+    BadgeDef("level_5", "level", 5, "level", "level_progress"),
+    BadgeDef("level_10", "level", 10, "level", "level_progress"),
 ]
 
 

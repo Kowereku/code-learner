@@ -1,7 +1,8 @@
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, computed_field
 
+from src.core.levels import level_for_xp, xp_for_level
 from src.model.track import Track
 
 
@@ -44,6 +45,24 @@ class UserRead(UserBase):
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+    @computed_field
+    @property
+    def level(self) -> int:
+        """Level reached with the total XP; computed, never stored."""
+        return level_for_xp(self.total_xp)
+
+    @computed_field
+    @property
+    def level_xp(self) -> int:
+        """XP threshold of the current level."""
+        return xp_for_level(self.level)
+
+    @computed_field
+    @property
+    def next_level_xp(self) -> int:
+        """XP threshold of the next level."""
+        return xp_for_level(self.level + 1)
 
 
 class UserTrackUpdate(BaseModel):
