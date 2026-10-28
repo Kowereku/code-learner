@@ -1,7 +1,9 @@
+from datetime import date
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from src.api.deps import get_current_user, get_locale
+from src.api.deps import get_current_user, get_locale, get_today
 from src.crud import lesson as lesson_crud
 from src.crud import progress as progress_crud
 from src.model.db import get_db
@@ -32,6 +34,7 @@ def complete_lesson(
     lesson_in: LessonComplete,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    today: date = Depends(get_today),
 ) -> LessonCompleteResponse:
     """Mark a lesson as completed by the current user.
 
@@ -47,5 +50,10 @@ def complete_lesson(
             detail=f"Lesson with ID {lesson_id} not found.",
         )
     return progress_crud.complete_lesson(
-        db, current_user, lesson, lesson_in.mistakes_made, lesson_in.code_answers
+        db,
+        current_user,
+        lesson,
+        lesson_in.mistakes_made,
+        today,
+        lesson_in.code_exercise_ids,
     )

@@ -1,9 +1,12 @@
+from datetime import date, datetime, timezone
+
 from fastapi import Depends, Header, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 import jwt
 from sqlalchemy.orm import Session
 
 from src.core.security import decode_access_token
+from src.core.streak import local_today
 from src.crud import user as user_crud
 from src.model.db import get_db
 from src.model.user import User
@@ -39,3 +42,8 @@ def get_current_user(
 def get_locale(accept_language: str = Header(default="en")) -> str:
     """Return the two-letter language code the client asked for."""
     return accept_language[:2].lower()
+
+
+def get_today(x_timezone: str | None = Header(default=None)) -> date:
+    """Return today's date in the user's time zone, sent by the client as X-Timezone (e.g. Europe/Warsaw)."""
+    return local_today(x_timezone, datetime.now(timezone.utc))

@@ -37,4 +37,5 @@ class LessonDetailRead(Localized):
 
 class LessonComplete(BaseModel):
     mistakes_made: int = Field(default=0, ge=0)
-    code_answers: int = Field(default=0, ge=0)
+    # Code exercises of this lesson solved by typing in this run; each counts once per user, ever.
+    code_exercise_ids: list[int] = Field(default_factory=list, max_length=100)

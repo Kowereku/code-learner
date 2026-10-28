@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 
 from src.crud.badge import award_badges, get_metrics, sync_badges
 from src.crud.progress import complete_lesson
@@ -8,22 +8,24 @@ from src.model.lesson import Lesson
 from src.model.module import Module
 from src.model.user_lesson import UserLesson
 
+TODAY = date(2026, 10, 25)
+
 
 def test_sync_is_idempotent(db, make_user):
     user = make_user(best_streak=3)
-    assert [b.code for b in sync_badges(db, user)] == ["streak_3"]
-    assert sync_badges(db, user) == []
+    assert [b.code for b in sync_badges(db, user, TODAY)] == ["streak_3"]
+    assert sync_badges(db, user, TODAY) == []
 
 
 def test_award_skips_badges_inserted_meanwhile(db, make_user):
-    # Two requests racing: the second insert of the same badge must not fail.
+    # Two completions racing: the second insert of the same badge must not fail.
     user = make_user()
     now = datetime.now(timezone.utc)
     assert award_badges(db, user.id, ["streak_3"], now) == ["streak_3"]
     assert award_badges(db, user.id, ["streak_3"], now) == []
 
 
-def test_code_answers_are_capped_at_the_lessons_code_exercises(db, make_user):
+def test_each_code_exercise_counts_once_even_on_replays(db, make_user):
     user = make_user()
     lesson = (
         db.query(Lesson)
@@ -31,9 +33,11 @@ def test_code_answers_are_capped_at_the_lessons_code_exercises(db, make_user):
         .filter(Exercise.type == ExerciseType.code)
         .first()
     )
-    code_count = sum(1 for e in lesson.exercises if e.type == ExerciseType.code)
-    complete_lesson(db, user, lesson, mistakes_made=0, code_answers=99)
-    assert user.code_answers == code_count
+    code_ids = [e.id for e in lesson.exercises if e.type == ExerciseType.code]
+    other_id = next(e.id for e in db.query(Exercise) if e.lesson_id != lesson.id)
+    complete_lesson(db, user, lesson, 0, TODAY, code_ids + [other_id])
+    complete_lesson(db, user, lesson, 0, TODAY, code_ids)
+    assert get_metrics(db, user, TODAY).code_answers == len(code_ids)
 
 
 def test_courses_completed_counts_courses_with_every_lesson_done(db, make_user):
@@ -49,4 +53,4 @@ def test_courses_completed_counts_courses_with_every_lesson_done(db, make_user):
         for (lesson_id,) in lesson_ids
     )
     db.flush()
-    assert get_metrics(db, user).courses_completed == 1
+    assert get_metrics(db, user, TODAY).courses_completed == 1

@@ -1,3 +1,5 @@
+from datetime import date
+
 from sqlalchemy.orm import Session
 
 from src.core.badges import closest_next
@@ -10,7 +12,6 @@ from src.model.user import User
 from src.schemas.badge import BadgeRead
 from src.schemas.course import CourseListItem
 from src.schemas.profile import NextLessonRead, ProfileCourse, ProfileRead, ProfileStats
-from src.schemas.user import UserRead
 
 
 def _localized_title(item, locale: str) -> str:
@@ -18,23 +19,18 @@ def _localized_title(item, locale: str) -> str:
     return ((item.translations or {}).get(locale) or {}).get("title") or item.title
 
 
-def _refresh(db: Session, user: User) -> None:
-    """Bring the streak and badges up to date before reading them."""
-    user_crud.refresh_streak(db, user)
-    badge_crud.sync_badges(db, user)
-    db.commit()
+def get_badges(db: Session, user: User, today: date) -> list[BadgeRead]:
+    """Return all badges with progress. Read-only: badges are awarded when lessons are completed."""
+    return badge_crud.list_badges(db, user, badge_crud.get_metrics(db, user, today))
 
 
-def get_badges(db: Session, user: User) -> list[BadgeRead]:
-    """Return all badges with progress, after awarding any the user already qualifies for."""
-    _refresh(db, user)
-    return badge_crud.list_badges(db, user)
+def get_profile(db: Session, user: User, locale: str, today: date) -> ProfileRead:
+    """Build the profile: stats, badges, started courses (in progress first) and a suggested course.
 
-
-def get_profile(db: Session, user: User, locale: str) -> ProfileRead:
-    """Build the profile: stats, badges, started courses (in progress first) and a suggested course."""
-    _refresh(db, user)
-    metrics = badge_crud.get_metrics(db, user)
+    Read-only: the streak shown is computed for today, nothing is written.
+    """
+    shown_user = user_crud.user_read(user, today)
+    metrics = badge_crud.get_metrics(db, user, today)
     badges = badge_crud.list_badges(db, user, metrics)
     earned = [badge for badge in badges if badge.awarded_at]
     upcoming_badge = closest_next(metrics, {badge.code for badge in earned})
@@ -72,10 +68,10 @@ def get_profile(db: Session, user: User, locale: str) -> ProfileRead:
     suggested = suggest_course(courses, started_ids, user.track)
 
     return ProfileRead(
-        user=UserRead.model_validate(user),
+        user=shown_user,
         stats=ProfileStats(
             total_xp=user.total_xp,
-            streak_days=user.streak_days,
+            streak_days=shown_user.streak_days,
             courses_completed=len(done),
             badges_earned=len(earned),
         ),

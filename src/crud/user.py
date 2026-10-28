@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import date
 
 from sqlalchemy.orm import Session
 
@@ -6,7 +6,7 @@ from src.core.security import hash_password
 from src.core.streak import displayed_streak
 from src.model.track import Track
 from src.model.user import User
-from src.schemas.user import UserCreate
+from src.schemas.user import UserCreate, UserRead
 
 
 def get_user_by_id(db: Session, user_id: int) -> User | None:
@@ -48,15 +48,14 @@ def create_user(db: Session, user_in: UserCreate) -> User:
     return user
 
 
-def refresh_streak(db: Session, user: User) -> User:
-    """Reset a streak that broke because a whole day was skipped, so it reads as 0."""
-    today = datetime.now(timezone.utc).date()
-    streak = displayed_streak(user.last_activity_date, today, user.streak_days)
-    if streak != user.streak_days:
-        user.streak_days = streak
-        db.commit()
-        db.refresh(user)
-    return user
+def user_read(user: User, today: date) -> UserRead:
+    """Return the user as the API shows it: a streak broken by a skipped day reads as 0.
+
+    Only the response changes; the stored streak is left alone, so reads never write.
+    """
+    return UserRead.model_validate(user).model_copy(
+        update={"streak_days": displayed_streak(user.last_activity_date, today, user.streak_days)}
+    )
 
 
 def update_user_track(db: Session, user: User, track: Track) -> User:
