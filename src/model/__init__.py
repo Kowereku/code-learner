@@ -12,6 +12,7 @@ from src.model.lesson import Lesson
 from src.model.module import Module
 from src.model.user import User
 from src.model.user_badge import UserBadge
+from src.model.user_code_solution import UserCodeSolution
 from src.model.user_course import UserCourse
 from src.model.user_lesson import UserLesson
 
@@ -25,6 +26,7 @@ __all__ = [
     "Track",
     "User",
     "UserBadge",
+    "UserCodeSolution",
     "UserCourse",
     "UserLesson",
 ]

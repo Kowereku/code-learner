@@ -1,11 +1,10 @@
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 
 from sqlalchemy.orm import Session, selectinload
 
 from src.core.streak import next_streak
-from src.crud.badge import sync_badges
+from src.crud.badge import record_code_solutions, sync_badges
 from src.model.course import Course
-from src.model.exercise import ExerciseType
 from src.model.lesson import Lesson
 from src.model.module import Module
 from src.model.user import User
@@ -119,13 +118,15 @@ def complete_lesson(
     user: User,
     lesson: Lesson,
     mistakes_made: int,
-    code_answers: int = 0,
+    today: date,
+    code_exercise_ids: list[int] | None = None,
 ) -> LessonCompleteResponse:
     """Mark a lesson completed, award XP on first completion, and check
     whether the entire course has been finished.
 
-    Every completion, replays included, counts towards the daily streak and
-    adds the correct typed code answers; badges reached by it are awarded.
+    Every completion, replays included, counts towards the daily streak (today is the
+    user's local date). Code exercises solved by typing count once each, ever.
+    Badges reached by it are awarded.
 
     Returns a structured response with all reward details.
     """
@@ -133,13 +134,10 @@ def complete_lesson(
     is_first_completion = False
     xp_earned = 0
 
-    today = now.date()
     user.streak_days = next_streak(user.last_activity_date, today, user.streak_days)
     user.last_activity_date = today
     user.best_streak = max(user.best_streak, user.streak_days)
-    # A run can't have more correct typed answers than the lesson has code exercises.
-    code_exercises = sum(1 for exercise in lesson.exercises if exercise.type == ExerciseType.code)
-    user.code_answers += min(code_answers, code_exercises)
+    record_code_solutions(db, user.id, lesson, code_exercise_ids or [])
 
     # Upsert UserLesson row
     user_lesson = db.get(UserLesson, (user.id, lesson.id))
@@ -171,7 +169,7 @@ def complete_lesson(
         if course_completion and course_completion.bonus_xp > 0:
             xp_earned += course_completion.bonus_xp
 
-    new_badges = sync_badges(db, user)
+    new_badges = sync_badges(db, user, today)
 
     db.commit()
     db.refresh(user)

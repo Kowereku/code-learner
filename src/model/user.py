@@ -22,9 +22,6 @@ class User(Base):
         BigInteger, nullable=False, default=0, server_default="0"
     )
     last_activity_date: Mapped[date | None] = mapped_column(Date, nullable=True)
-    code_answers: Mapped[int] = mapped_column(
-        BigInteger, nullable=False, default=0, server_default="0"
-    )
     track: Mapped[str | None] = mapped_column(String(50), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
