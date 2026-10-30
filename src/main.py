@@ -12,8 +12,9 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 from src.api import (
     ai,
@@ -42,6 +43,23 @@ origins = [
     "http://localhost:3000",
 ]
 
+
+# Order matters: this must be declared before CORSMiddleware so it runs inside it and the 500
+# still carries CORS headers. An @app.exception_handler(Exception) would run outside CORS, and
+# the browser would hide the response and report a network error instead.
+@app.middleware("http")
+async def catch_unexpected_errors(request: Request, call_next):
+    """Log any error no endpoint handled and answer with JSON the frontend can always read.
+
+    HTTP errors raised on purpose (4xx, the 503 when Ducky is unavailable) don't reach this.
+    """
+    try:
+        return await call_next(request)
+    except Exception:
+        logger.exception("Unhandled error on %s %s", request.method, request.url.path)
+        return JSONResponse(status_code=500, content={"detail": "Something went wrong on our side."})
+
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -49,6 +67,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
 app.include_router(courses.router, prefix="/api/courses", tags=["courses"])
