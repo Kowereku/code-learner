@@ -24,13 +24,18 @@ def list_courses(
     return [CourseListItem.from_course(course, locale) for course in courses]
 
 
-@router.post("", response_model=CourseListItem, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "",
+    response_model=CourseListItem,
+    status_code=status.HTTP_201_CREATED,
+    dependencies=[Depends(get_current_user)],
+)
 def create_course(
     course_in: CourseCreate,
     db: Session = Depends(get_db),
     locale: str = Depends(get_locale),
 ) -> CourseListItem:
-    """Create a new course."""
+    """Create a new course; needs a login (admin-only is planned)."""
     return CourseListItem.from_course(course_crud.create_course(db, course_in), locale)
 
 
