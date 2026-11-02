@@ -116,7 +116,7 @@ def record_code_solutions(db: Session, user_id: int, lesson: Lesson, exercise_id
 def sync_badges(db: Session, user: User, today: date) -> list[BadgeRead]:
     """Award every badge the user qualifies for but doesn't have yet.
 
-    Runs only when a lesson is completed, inside its transaction (no commit here); reads never award.
+    Runs when a lesson is completed (inside its transaction) and on login; never commits, reads never award.
     Returns only the newly awarded badges.
     """
     # The app's sessions don't autoflush, so pending progress must be visible to the metric queries.

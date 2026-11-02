@@ -1,5 +1,6 @@
 from datetime import date, datetime, timezone
 
+from src.core.security import hash_password
 from src.crud.badge import award_badges, get_metrics, sync_badges
 from src.crud.leaderboard import rank_of
 from src.crud.progress import complete_lesson
@@ -7,6 +8,7 @@ from src.model.course import Course
 from src.model.exercise import Exercise, ExerciseType
 from src.model.lesson import Lesson
 from src.model.module import Module
+from src.model.user_badge import UserBadge
 from src.model.user_lesson import UserLesson
 
 TODAY = date(2026, 10, 25)
@@ -16,6 +18,16 @@ def test_sync_is_idempotent(db, make_user):
     user = make_user(best_streak=3)
     assert [b.code for b in sync_badges(db, user, TODAY)] == ["streak_3"]
     assert sync_badges(db, user, TODAY) == []
+
+
+def test_login_awards_badges_reached_before_they_existed(db, client, make_user):
+    user = make_user(password=hash_password("secret123"), total_xp=300)
+    response = client.post(
+        "/api/auth/login", json={"username_or_email": "probe", "password": "secret123"}
+    )
+    assert response.status_code == 200
+    codes = {badge.badge_code for badge in db.query(UserBadge).filter_by(user_id=user.id)}
+    assert "level_3" in codes
 
 
 def test_award_skips_badges_inserted_meanwhile(db, make_user):

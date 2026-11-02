@@ -16,11 +16,21 @@ The full stack (FastAPI app + Postgres) runs via Docker Compose. The `app` servi
 
 ### Start the full stack
 
-Build the image and start both services:
+Build the image, migrate and seed the database, then start the services:
 
 ```bash
 make up
 ```
+
+### Set up the database only
+
+Apply migrations and seed the courses inside a one-off `app` container (safe to re-run; existing courses are skipped):
+
+```bash
+make db-setup
+```
+
+`make migrate` and `make seed` run the two steps separately. Each rebuilds the image first, so newly generated migrations are included.
 
 ### Verify it is running
 
@@ -84,10 +94,10 @@ For autogenerate to detect tables, make sure the model modules are imported and 
 
 ### Apply migrations
 
-Upgrade the database to the latest revision:
+Upgrade the database to the latest revision (runs in the `app` container):
 
 ```bash
-uv run alembic upgrade head
+make migrate
 ```
 
 ### Check the current revision
