@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from src.api.deps import get_current_user, get_today
 from src.core.security import create_access_token, verify_password
+from src.crud import badge as badge_crud
 from src.crud import user as user_crud
 from src.model.db import get_db
 from src.model.user import User
@@ -32,8 +33,13 @@ def register(user_in: UserCreate, db: Session = Depends(get_db)):
 
 
 @router.post("/login", response_model=Token)
-def login(login_data: LoginData, db: Session = Depends(get_db)):
-    """Authenticate user with username/email and password, returning JWT access token."""
+def login(
+    login_data: LoginData, db: Session = Depends(get_db), today: date = Depends(get_today)
+):
+    """Authenticate user with username/email and password, returning JWT access token.
+
+    Also awards badges the user already qualifies for, e.g. ones added after they earned them.
+    """
     user = user_crud.get_user_by_identifier(db, login_data.username_or_email)
 
     if not user or not verify_password(login_data.password, user.password):
@@ -42,6 +48,9 @@ def login(login_data: LoginData, db: Session = Depends(get_db)):
             detail="Wrong email/username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
+
+    badge_crud.sync_badges(db, user, today)
+    db.commit()
 
     access_token = create_access_token(
         data={"sub": str(user.id), "username": user.username}

@@ -1,4 +1,4 @@
-.PHONY: install run-dev run test migrate seed up down build logs db-up db-down hooks ai-up ai-pull
+.PHONY: install run-dev run test migrate seed db-setup up down build logs db-up db-down hooks ai-up ai-pull
 
 install:
 	uv sync
@@ -13,12 +13,14 @@ run:
 	uv run uvicorn src.main:app
 
 migrate:
-	uv run alembic upgrade head
+	docker compose run --rm --build app alembic upgrade head
 
 seed:
-	uv run python -m src.scripts.seed
+	docker compose run --rm --build app python -m src.scripts.seed
 
-up:
+db-setup: migrate seed
+
+up: db-setup
 	docker compose up -d --build
 
 down:
