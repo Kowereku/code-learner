@@ -40,6 +40,10 @@ The app is exposed on `localhost:8000`:
 curl http://localhost:8000/
 ```
 
+### Read sent emails
+
+Password reset emails are caught by Mailpit; open its inbox at http://localhost:8025. To send real emails instead, set the SMTP variables described in `.env.example`.
+
 ### Follow the logs
 
 Tail the app container output:

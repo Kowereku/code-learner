@@ -1,4 +1,17 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, EmailStr, Field
+
+
+class ForgotPasswordData(BaseModel):
+    """Payload asking for a password reset link."""
+
+    email: EmailStr
+
+
+class ResetPasswordData(BaseModel):
+    """Payload setting a new password with the token from a reset link."""
+
+    token: str
+    password: str = Field(..., min_length=6, max_length=32, description="New password")
 
 
 class LoginData(BaseModel):

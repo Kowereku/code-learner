@@ -48,6 +48,12 @@ def create_user(db: Session, user_in: UserCreate) -> User:
     return user
 
 
+def update_password(db: Session, user: User, password: str) -> None:
+    """Replace the user's password with the hash of a new one."""
+    user.password = hash_password(password)
+    db.commit()
+
+
 def user_read(user: User, today: date) -> UserRead:
     """Return the user as the API shows it: a streak broken by a skipped day reads as 0.
 
